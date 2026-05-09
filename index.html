@@ -241,7 +241,31 @@
         body.dark-mode .progress-header { color: #ccc; }
         body.dark-mode .progress-bar-bg { background: #333; }
         body.dark-mode .timeline-container { background: #252526; border-color: #444; }
-        
+        /* =========================================
+        D-Day 관리 UI 스타일
+        ========================================= */
+        .d-day-controls { 
+            display: flex; gap: 5px; margin-top: 15px; 
+            border-top: 1px dashed #eee; padding-top: 15px;
+        }
+        .d-day-input { 
+            flex: 1; padding: 6px; border: 1px solid #d9d9d9; 
+            border-radius: 4px; font-size: 12px; width: 40%;
+        }
+        .d-day-btn { 
+            padding: 6px 10px; background: #37352f; color: white; 
+            border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;
+        }
+        .d-day-btn:hover { background: #555; }
+        .d-day-delete-btn { 
+            background: none; border: none; color: #ff4d4f; cursor: pointer; 
+            font-size: 16px; padding: 0 5px; opacity: 0.3; transition: 0.2s;
+        }
+        .d-day-delete-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        /* 다크모드 대응 */
+        body.dark-mode .d-day-controls { border-top-color: #444; }
+        body.dark-mode .d-day-input { background: #252526; color: #fff; border-color: #444; }
     </style>
 </head>
 <body>
@@ -274,7 +298,14 @@
 
         <div>
             <h3>⏳ 학사일정 D-Day</h3>
-            <div class="d-day-widget" id="dday-container"></div>
+            <div class="d-day-widget">
+                <div id="dday-container"></div>
+                <div class="d-day-controls no-print">
+                    <input type="text" id="new-dday-name" class="d-day-input" placeholder="일정명 (예: 소풍)">
+                    <input type="date" id="new-dday-date" class="d-day-input">
+                    <button class="d-day-btn" onclick="addDDay()">추가</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -372,15 +403,39 @@
             { period: 7, start: "15:40", end: "16:30" }
         ];
 
-        const dDayDates = [
-            { name: "💯 1차 정기시험(4.23)", date: "2026-04-23" }, { name: "👟 교직원 명랑운동회(4.27)", date: "2026-04-27" },
-            { name: "🏆 체육대회(4.30)", date: "2026-04-30" }, { name: "💯 2차 정기시험(6.29)", date: "2026-06-29" },
-            { name: "🌊 여름방학식(7.21)", date: "2026-07-21" }, { name: "🏫 개학일(8.10)", date: "2026-08-10" },
-            { name: "💯 1차 정기시험(9.29)", date: "2026-09-29" }, { name: "🚌 푸소,수학여행(10.28~30)", date: "2026-10-28" },
-            { name: "🍀 수능 (수능대박!)(11.19)", date: "2026-11-19" }, { name: "💯 2차 정기시험(12.1)", date: "2026-12-01" },
-            { name: "⛄ 겨울방학식(12.28)", date: "2026-12-28" }, { name: "🏫 개학일(27.1.20)", date: "2027-01-20" },
-            { name: "🎓 졸업식(27.1.21)", date: "2027-01-21" },
+        // 기존 const dDayDates 부분을 아래로 교체
+        let dDayDates = []; 
+
+        // 최초 접속 시 보여줄 기본 데이터
+        const defaultDDays = [
+            { name: "💯 1차 정기시험(4.23)", date: "2026-04-23" },
+            { name: "👟 교직원 명랑운동회(4.27)", date: "2026-04-27" },
+            { name: "🏆 체육대회(4.30)", date: "2026-04-30" },
+            { name: "💯 2차 정기시험(6.29)", date: "2026-06-29" },
+            { name: "🌊 여름방학식(7.21)", date: "2026-07-21" },
+            { name: "🏫 개학일(8.10)", date: "2026-08-10" }
         ];
+
+        // 로컬스토리지에서 D-Day 불러오기
+        function loadDDays() {
+            const savedDDays = localStorage.getItem('myDDays');
+            if (savedDDays) {
+                dDayDates = JSON.parse(savedDDays);
+            } else {
+                dDayDates = [...defaultDDays];
+            }
+            sortDDays(); // 날짜순 정렬
+        }
+
+        // 로컬스토리지에 D-Day 저장하기
+        function saveDDays() {
+            localStorage.setItem('myDDays', JSON.stringify(dDayDates));
+        }
+
+        // 날짜 오름차순 정렬 함수
+        function sortDDays() {
+            dDayDates.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
 
         /* ==========================================
            2. 시스템 기능
@@ -466,13 +521,11 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            dDayDates.forEach(d => {
+            dDayDates.forEach((d, index) => {
                 const targetDate = new Date(d.date);
-                targetDate.setHours(0, 0, 0, 0); // 👈 추가된 부분: 타겟 날짜의 시간도 0시 정각으로 초기화
+                targetDate.setHours(0, 0, 0, 0);
 
                 const diffTime = targetDate - today;
-                
-                // 👈 수정된 부분: Math.ceil 대신 Math.round 사용
                 const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
                 
                 let ddayText = '';
@@ -480,9 +533,45 @@
                 else if(diffDays === 0) ddayText = `D-Day! 🎉`;
                 else ddayText = `D+${Math.abs(diffDays)}`;
 
-                html += `<div class="d-day-item"><span>${d.name}</span><strong>${ddayText}</strong></div>`;
+                html += `
+                <div class="d-day-item">
+                    <div style="flex:1; display:flex; justify-content:space-between; margin-right:10px;">
+                        <span>${d.name}</span>
+                        <strong>${ddayText}</strong>
+                    </div>
+                    <button class="d-day-delete-btn" onclick="deleteDDay(${index})" title="삭제">×</button>
+                </div>`;
             });
             container.innerHTML = html;
+        }
+
+        // D-Day 추가 함수
+        function addDDay() {
+            const nameInput = document.getElementById('new-dday-name');
+            const dateInput = document.getElementById('new-dday-date');
+            
+            if(!nameInput.value.trim() || !dateInput.value) {
+                alert("일정명과 날짜를 모두 입력해주세요! 😊");
+                return;
+            }
+
+            dDayDates.push({ name: nameInput.value.trim(), date: dateInput.value });
+            sortDDays(); // 추가 후 날짜순 재정렬
+            saveDDays(); // 브라우저에 저장
+            renderDDay(); // 화면 새로고침
+
+            // 입력창 비우기
+            nameInput.value = '';
+            dateInput.value = '';
+        }
+
+        // D-Day 삭제 함수
+        function deleteDDay(index) {
+            if(confirm(`'${dDayDates[index].name}' 일정을 삭제하시겠습니까?`)) {
+                dDayDates.splice(index, 1);
+                saveDDays();
+                renderDDay();
+            }
         }
 
         /* ==========================================
@@ -809,11 +898,12 @@
            4. 초기 실행
            ========================================== */
         window.onload = function() {
+            loadDDays(); // 👈 이 줄을 추가하세요! (renderDDay 보다 먼저 실행되어야 합니다)
             renderTimetable();
             renderTimeline();
             updateClockAndTimeline();
             renderDDay();
-            loadDataFromSheet(); // 👈 시트에서 불러오기 실행
+            loadDataFromSheet(); 
         };
         
     </script>
