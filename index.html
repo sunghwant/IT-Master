@@ -797,12 +797,12 @@
                 icon.style.transform = 'rotate(180deg)'; 
             }
         }
-        // 🍚 나이스 오픈 API 연동: 동적 학교 검색 및 특정 날짜 급식 조회
+        // 🍚 나이스 오픈 API 연동: 동적 학교 검색 및 특정 날짜 급식 조회 (중/석식 모두 출력)
         async function fetchMeal() {
             const mealContainer = document.getElementById('meal-container');
             const datePicker = document.getElementById('meal-date-picker');
             
-            // 1. 조회할 날짜 세팅 (달력 값이 있으면 그 날짜, 없으면 오늘 날짜)
+            // 1. 조회할 날짜 세팅
             let targetDateObj;
             if (datePicker && datePicker.value) {
                 targetDateObj = new Date(datePicker.value);
@@ -818,7 +818,7 @@
             mealContainer.innerHTML = "급식 정보를 불러오는 중입니다... ⏳";
 
             try {
-                // 2. 나이스 API에서 '상일여자고등학교' 검색
+                // 2. 나이스 API에서 학교 정보 검색
                 const schoolUrl = `https://open.neis.go.kr/hub/schoolInfo?Type=json&SCHUL_NM=상일여자고등학교`;
                 const schoolRes = await fetch(schoolUrl);
                 const schoolData = await schoolRes.json();
@@ -828,7 +828,6 @@
                     return;
                 }
 
-                // 3. 검색 결과 중 '광주' 지역 추출
                 const targetSchool = schoolData.schoolInfo[1].row.find(s => s.ATPT_OFCDC_SC_NM.includes("광주"));
                 if (!targetSchool) {
                     mealContainer.innerHTML = "광주 지역의 해당 학교를 찾을 수 없습니다.";
@@ -838,26 +837,37 @@
                 const officeCode = targetSchool.ATPT_OFCDC_SC_CODE;
                 const schoolCode = targetSchool.SD_SCHUL_CODE;
 
-                // 4. 추출한 정보와 선택한 날짜로 급식 조회하기
+                // 3. 해당 날짜의 모든 급식 데이터 호출
                 const mealUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${targetDateStr}`;
                 
                 const mealRes = await fetch(mealUrl);
                 const mealJson = await mealRes.json();
 
-                // 5. 급식 데이터 출력
+                // 4. 급식 데이터가 존재하면 전체(조/중/석)를 순회하며 출력
                 if (mealJson.mealServiceDietInfo) {
-                    const mealData = mealJson.mealServiceDietInfo[1].row[0]; // 중식 데이터
+                    const meals = mealJson.mealServiceDietInfo[1].row; // 해당 일자의 모든 급식 배열
                     
-                    // 알레르기 숫자 및 특수기호 제거
-                    let cleanDish = mealData.DDISH_NM.replace(/<br\/>/g, '<br>');
-                    cleanDish = cleanDish.replace(/\([0-9.]+\)/g, ''); 
-                    cleanDish = cleanDish.replace(/\*/g, '').trim(); 
+                    let html = `<div style="font-weight:bold; margin-bottom:15px; font-size:15px;">🍽️ ${yyyy}년 ${mm}월 ${dd}일 식단</div>`;
+                    
+                    // 중/석식이 나란히 보이도록 Flexbox 레이아웃 적용
+                    html += `<div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">`;
 
-                    mealContainer.innerHTML = `
-                        <div style="font-weight:bold; margin-bottom:10px;">🍽️ ${yyyy}년 ${mm}월 ${dd}일 식단 (${mealData.MMEAL_SC_NM})</div>
-                        <div>${cleanDish}</div>
-                        <div style="margin-top:15px; font-size:12px; opacity:0.7;">🔥 칼로리: ${mealData.CAL_INFO}</div>
-                    `;
+                    meals.forEach(mealData => {
+                        let cleanDish = mealData.DDISH_NM.replace(/<br\/>/g, '<br>');
+                        cleanDish = cleanDish.replace(/\([0-9.]+\)/g, ''); 
+                        cleanDish = cleanDish.replace(/\*/g, '').trim(); 
+
+                        html += `
+                            <div style="flex: 1; min-width: 140px; padding: 15px; border: 1px dashed rgba(150,150,150,0.5); border-radius: 8px;">
+                                <div style="font-weight: 900; margin-bottom: 10px; font-size: 15px;">[${mealData.MMEAL_SC_NM}]</div>
+                                <div style="font-size: 14px; line-height: 1.6;">${cleanDish}</div>
+                                <div style="margin-top:15px; font-size:12px; opacity:0.7;">🔥 ${mealData.CAL_INFO}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `</div>`;
+                    mealContainer.innerHTML = html;
                 } else {
                     mealContainer.innerHTML = `해당 날짜(${yyyy}-${mm}-${dd})에는 급식 정보가 없습니다. 🍳`;
                 }
@@ -875,7 +885,7 @@
             renderTimetable();
             renderTimeline();
             updateClockAndTimeline();
-            
+
             // 🌟 달력에 오늘 날짜 기본 세팅 추가
             const datePicker = document.getElementById('meal-date-picker');
             const now = new Date();
