@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05. 감각 불어넣기 - 아두이노 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0d9488; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #f0fdf4; --tip-border: #10b981; --border-color: #e2e8f0; --accent-red: #ef4444; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 사이드바 */
+        .sidebar { width: 300px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.1rem; color: #0f172a; margin-top: 20px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 8px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; font-size: 0.95rem; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #ccfbf1; color: var(--primary); font-weight: bold; }
+        
+        /* 본문 영역 */
+        .content { margin-left: 300px; padding: 60px 80px; max-width: 1000px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+        
+        /* 코드 블록 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .kw { color: #f9a8d4; }
+        .func { color: #a7f3d0; }
+        .num { color: #fef08a; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* 콜아웃 박스 */
+        .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout.danger { background-color: #fef2f2; border-left-color: var(--accent-red); }
+        .callout.concept { background-color: #f5f3ff; border-left-color: var(--accent-purple); }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .callout.danger h4 { color: var(--accent-red); }
+        .callout.concept h4 { color: var(--accent-purple); }
+
+        /* 이미지 컨테이너 */
+        .img-container { text-align: center; margin: 40px 0; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .img-caption { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); font-weight: 500; }
+        
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>💻 C언어 기초</h2>
+        <ul class="nav-list">
+            <li><a href="index.html">C언어 과정 홈</a></li>
+        </ul>
+
+        <h2>🤖 아두이노 제어</h2>
+        <ul class="nav-list">
+            <li><a href="arduino_01_intro.html">01. 아두이노의 세계로</a></li>
+            <li><a href="arduino_02_digital.html">02. 디지털 입출력</a></li>
+            <li><a href="arduino_03_analog.html">03. 아날로그의 이해</a></li>
+            <li><a href="arduino_04_serial.html">04. 시리얼 통신</a></li>
+            <li><a href="arduino_05_sensor.html" class="active">05. 감각 불어넣기</a></li>
+            <li><a href="arduino_06_motor.html">06. 움직임 만들기</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>05. 감각 불어넣기: 센서로 세상 읽기</h1>
+        <div class="subtitle">아두이노에게 빛을 느끼는 눈과, 거리를 가늠하는 귀를 달아줍니다.</div>
+
+        <section>
+            <h2>1. 세상의 빛을 느끼다: 조도 센서 (CDS Cell)</h2>
+            <p>조도 센서는 주변이 <strong>밝으면 저항이 작아지고, 어두우면 저항이 커지는</strong> 특별한 부품입니다. 이 저항의 변화를 전압의 변화로 바꾸어 아두이노의 <strong>아날로그 핀(A0)</strong>으로 읽어 들입니다.</p>
+
+            <div class="img-container">
+                <svg width="100%" max-width="500" height="200" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: 0 auto;">
+                    <circle cx="150" cy="100" r="40" fill="#fef08a" stroke="#eab308" stroke-width="4"/>
+                    <path d="M 125 100 Q 150 70 175 100 T 125 100" fill="none" stroke="#ca8a04" stroke-width="3"/>
+                    <path d="M 125 110 Q 150 80 175 110 T 125 110" fill="none" stroke="#ca8a04" stroke-width="3"/>
+                    <line x1="135" y1="140" x2="135" y2="180" stroke="#94a3b8" stroke-width="4"/>
+                    <line x1="165" y1="140" x2="165" y2="180" stroke="#94a3b8" stroke-width="4"/>
+                    
+                    <path d="M 50 50 L 90 75" stroke="#f59e0b" stroke-width="3" stroke-dasharray="5,5"/>
+                    <circle cx="40" cy="40" r="15" fill="#f59e0b"/>
+                    
+                    <rect x="250" y="50" width="200" height="100" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+                    <text x="270" y="80" fill="#334155" font-weight="bold">☀️ 밝을 때: 값 증가 (ex. 800)</text>
+                    <text x="270" y="120" fill="#334155" font-weight="bold">🌙 어두울 때: 값 감소 (ex. 200)</text>
+                </svg>
+                <div class="img-caption">▲ 조도 센서(CDS)의 원리. 빛의 양에 따라 변하는 저항값을 아날로그 데이터로 읽어옵니다.</div>
+            </div>
+
+            <div class="callout danger">
+                <h4>⚠️ 반드시 10kΩ 고정 저항이 필요합니다!</h4>
+                <p>버튼에서 플로팅 현상을 막기 위해 저항을 썼던 것 기억하시나요? 조도 센서도 마찬가지로, 전압을 정확히 나누어 아두이노에 전달하기 위해 한쪽 다리에 <strong>10kΩ 저항(풀다운 저항)</strong>을 연결하고 GND로 빼주어야 합니다.</p>
+            </div>
+
+            <h3>💡 실습 1: 어두워지면 켜지는 가로등</h3>
+<pre><code><span class="kw">void</span> <span class="func">setup</span>() {
+    <span class="func">Serial.begin</span>(<span class="num">9600</span>);   <span class="cmt">// 컴퓨터와 통신 시작</span>
+    <span class="func">pinMode</span>(<span class="num">13</span>, OUTPUT);  <span class="cmt">// 13번 내장 LED 출력 설정</span>
+}
+
+<span class="kw">void</span> <span class="func">loop</span>() {
+    <span class="type">int</span> light = <span class="func">analogRead</span>(A0); <span class="cmt">// 조도 센서 값 읽기 (0 ~ 1023)</span>
+    
+    <span class="func">Serial.print</span>(<span class="str">"현재 빛의 밝기: "</span>);
+    <span class="func">Serial.println</span>(light);
+    
+    <span class="cmt">// 센서 값이 300보다 작으면 (어두워지면)</span>
+    <span class="kw">if</span> (light &lt; <span class="num">300</span>) {
+        <span class="func">digitalWrite</span>(<span class="num">13</span>, HIGH); <span class="cmt">// 가로등(LED) 켜기</span>
+    } <span class="kw">else</span> {
+        <span class="func">digitalWrite</span>(<span class="num">13</span>, LOW);  <span class="cmt">// 밝으면 끄기</span>
+    }
+    
+    <span class="func">delay</span>(<span class="num">100</span>);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>2. 박쥐처럼 거리를 재다: 초음파 센서 (HC-SR04)</h2>
+            <p>초음파 센서는 사람의 귀에 들리지 않는 높은 주파수의 소리(초음파)를 발사하고, 그 소리가 물체에 부딪혀 <strong>되돌아오는 시간</strong>을 측정하여 거리를 계산합니다.</p>
+
+            <div class="img-container">
+                <svg width="100%" max-width="600" height="220" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: 0 auto;">
+                    <rect x="50" y="60" width="120" height="60" fill="#3b82f6" rx="5"/>
+                    <circle cx="80" cy="90" r="20" fill="#1e293b"/> <circle cx="140" cy="90" r="20" fill="#1e293b"/> <text x="80" y="95" fill="white" font-size="12" text-anchor="middle">T</text>
+                    <text x="140" y="95" fill="white" font-size="12" text-anchor="middle">R</text>
+                    
+                    <rect x="70" y="120" width="4" height="20" fill="#94a3b8"/>
+                    <rect x="90" y="120" width="4" height="20" fill="#94a3b8"/>
+                    <rect x="110" y="120" width="4" height="20" fill="#94a3b8"/>
+                    <rect x="130" y="120" width="4" height="20" fill="#94a3b8"/>
+
+                    <rect x="450" y="30" width="40" height="120" fill="#94a3b8" rx="5"/>
+                    <text x="470" y="170" fill="#334155" font-weight="bold" text-anchor="middle">장애물</text>
+
+                    <path d="M 170 80 Q 300 30 430 80" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,6"/>
+                    <polygon points="430,80 415,75 420,85" fill="#ef4444"/>
+                    <text x="300" y="65" fill="#ef4444" font-weight="bold" text-anchor="middle">Trig 핀: 야~ (초음파 발사)</text>
+
+                    <path d="M 430 100 Q 300 150 170 100" fill="none" stroke="#0d9488" stroke-width="3" stroke-dasharray="6,6"/>
+                    <polygon points="170,100 185,105 180,95" fill="#0d9488"/>
+                    <text x="300" y="145" fill="#0d9488" font-weight="bold" text-anchor="middle">Echo 핀: 메아리 수신</text>
+                </svg>
+                <div class="img-caption">▲ 초음파 센서 원리: 초음파를 쏘는 입(Trig)과 듣는 귀(Echo)로 나뉘어 있습니다.</div>
+            </div>
+
+            <div class="callout concept">
+                <h4>💡 거리 계산 공식 (물리 시간!)</h4>
+                <p>소리의 속도는 1초에 약 340m(34,000cm)를 이동합니다. 1마이크로초(us)로 환산하면 <strong>0.034cm</strong>가 되죠. 거리는 '속력 × 시간'이므로, 초음파가 날아간 시간에 0.034를 곱합니다. 단, 왕복한 시간이므로 <strong>반드시 2로 나누어 주어야 합니다.</strong><br>
+                <strong>거리(cm) = 측정된 시간(us) × 0.034 / 2</strong></p>
+            </div>
+
+            <h3>🎯 실습 2: 후방 감지 센서 만들기</h3>
+            <p>초음파 센서의 <code>Trig</code>를 9번 핀에, <code>Echo</code>를 10번 핀에 연결하고 물체와의 거리를 cm 단위로 측정해 봅시다.</p>
+
+<pre><code><span class="type">int</span> trigPin = <span class="num">9</span>;
+<span class="type">int</span> echoPin = <span class="num">10</span>;
+
+<span class="kw">void</span> <span class="func">setup</span>() {
+    <span class="func">Serial.begin</span>(<span class="num">9600</span>);
+    <span class="func">pinMode</span>(trigPin, OUTPUT); <span class="cmt">// 입(쏘는 쪽)은 출력</span>
+    <span class="func">pinMode</span>(echoPin, INPUT);  <span class="cmt">// 귀(듣는 쪽)는 입력</span>
+}
+
+<span class="kw">void</span> <span class="func">loop</span>() {
+    <span class="cmt">// 1. 초음파 발사 (아주 짧은 시간 동안 HIGH 신호 주기)</span>
+    <span class="func">digitalWrite</span>(trigPin, LOW);
+    <span class="func">delayMicroseconds</span>(<span class="num">2</span>);
+    <span class="func">digitalWrite</span>(trigPin, HIGH);
+    <span class="func">delayMicroseconds</span>(<span class="num">10</span>);
+    <span class="func">digitalWrite</span>(trigPin, LOW);
+
+    <span class="cmt">// 2. 되돌아온 시간 측정 (pulseIn 함수 사용)</span>
+    <span class="cmt">// 초음파가 돌아와 Echo 핀이 HIGH로 머문 시간을 마이크로초(us) 단위로 반환</span>
+    <span class="type">long</span> duration = <span class="func">pulseIn</span>(echoPin, HIGH);
+
+    <span class="cmt">// 3. 거리를 cm로 계산 (거리 = 시간 * 속력 / 2)</span>
+    <span class="type">long</span> distance = (duration * <span class="num">0.034</span>) / <span class="num">2</span>;
+
+    <span class="func">Serial.print</span>(<span class="str">"장애물과의 거리: "</span>);
+    <span class="func">Serial.print</span>(distance);
+    <span class="func">Serial.println</span>(<span class="str">" cm"</span>);
+
+    <span class="func">delay</span>(<span class="num">500</span>); <span class="cmt">// 0.5초마다 갱신</span>
+}</code></pre>
+        </section>
+    </main>
+</body>
+</html>
