@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C언어 마스터 가이드</title>
+    <title>C언어 & 아두이노 마스터 가이드</title>
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -25,24 +25,38 @@
             font-size: 1.1rem;
             font-weight: 500;
         }
-        .toc-list a span {
+        
+        /* C언어 파트 넘버링 색상 (블루) */
+        .toc-list.c-list a span {
             color: #2563eb;
             margin-right: 10px;
             font-weight: bold;
+        }
+
+        /* 아두이노 파트 넘버링 색상 (청록색) */
+        .toc-list.arduino-list a span {
+            color: #0d9488; 
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* 섹션 간격 띄우기 */
+        .course-section {
+            margin-bottom: 50px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🚀 C언어 기초부터 함수까지</h1>
-            <p>초보자를 위한 가장 쉽고 직관적인 C언어 웹 교재입니다.</p>
+            <h1>🚀 C언어 기초부터 아두이노까지</h1>
+            <p>소프트웨어의 기초를 다지고, 하드웨어를 직접 제어해보는 웹 교재입니다.</p>
         </header>
 
         <main>
-            <section class="toc-section">
-                <h2>📚 교육 과정 목차</h2>
-                <ul class="toc-list" style="list-style: none; padding: 0;">
+            <section class="course-section">
+                <h2>💻 1단계: C언어 기초 과정</h2>
+                <ul class="toc-list c-list" style="list-style: none; padding: 0;">
                     <li><a href="chapter_01_hello.html"><span>01.</span> Hello World (환경 구축 및 출력)</a></li>
                     <li><a href="chapter_02_variable.html"><span>02.</span> 변수와 자료형 (데이터 저장)</a></li>
                     <li><a href="chapter_03_operator.html"><span>03.</span> 연산자의 세계 (데이터 계산)</a></li>
@@ -53,10 +67,23 @@
                     <li><a href="chapter_08_pointer.html"><span>08.</span> 포인터 (Pointer) 입문</a></li>
                 </ul>
             </section>
+
+            <section class="course-section">
+                <h2>🤖 2단계: 아두이노(Arduino) 응용 과정</h2>
+                <ul class="toc-list arduino-list" style="list-style: none; padding: 0;">
+                    <li><a href="arduino_01_intro.html"><span>01.</span> 아두이노의 세계로 (LED 깜빡이기)</a></li>
+                    <li><a href="arduino_02_digital.html"><span>02.</span> 디지털 입출력 (버튼으로 LED 제어하기)</a></li>
+                    <li><a href="arduino_03_analog.html"><span>03.</span> 아날로그의 이해 (가변저항과 PWM 빛 조절)</a></li>
+                    <li><a href="arduino_04_serial.html"><span>04.</span> 시리얼 통신 (센서값을 컴퓨터로 확인하기)</a></li>
+                    <li><a href="arduino_05_sensor.html"><span>05.</span> 감각 불어넣기 (초음파 센서로 거리 재기)</a></li>
+                    <li><a href="arduino_06_motor.html"><span>06.</span> 움직임 만들기 (서보모터 제어하기)</a></li>
+                    <li><a href="arduino_07_project.html"><span>07.</span> 🏆 미니 프로젝트 (스마트 자동 휴지통 만들기)</a></li>
+                </ul>
+            </section>
         </main>
 
         <footer>
-            <p>&copy; 2026 C언어 스터디. All rights reserved.</p>
+            <p>&copy; 2026 IT 마스터 스터디. All rights reserved.</p>
         </footer>
     </div>
 </body>
