@@ -216,6 +216,20 @@
         <span class="func">printf</span>(<span class="str">"❌ 금액이 부족합니다. (500원 필요)\n"</span>);
     }
 }
+        
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="func">printf</span>(<span class="str">"--- 자판기 시뮬레이션 ---\n"</span>);
+    <span class="func">makeCoffee</span>(300);  <span class="cmt">// 실패하는 경우</span>
+    <span class="func">makeCoffee</span>(1000); <span class="cmt">// 성공하는 경우</span>
+    
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+
+            <div class="callout">
+                <h4>⚠️ 주의할 점: 함수의 위치</h4>
+                <p>C언어는 코드를 위에서 아래로 읽어 내려갑니다. 따라서 <code>main()</code> 함수에서 <code>makeCoffee()</code>를 사용하려면, 반드시 <strong>main 함수보다 위쪽에 함수를 정의</strong>하거나, 맨 위에 '함수의 원형(Prototype)'을 선언해 주어야 합니다.</p>
+            </div>
+        </section>
         <section>
             <h2>5. ✨ 창의적 응용 예제 3: 마법진 그리기 (별 찍기 함수)</h2>
             <p>프로그래밍의 꽃, '별 찍기'를 함수로 만들어 봅시다. 마법사가 주문을 외울 때마다 원하는 크기의 <strong>삼각형 마법진</strong>을 화면에 출력하는 함수입니다. 함수 내부에 반복문(for)을 넣어 복잡한 동작을 캡슐화(숨김)할 수 있습니다.</p>
@@ -318,20 +332,6 @@
                 <p>C언어에는 아주 오래전부터 <code>true</code>, <code>false</code>라는 단어가 기본으로 없었습니다. 대신 <strong>숫자 0은 거짓, 0이 아닌 모든 숫자(보통 1)는 참</strong>으로 인식합니다. 위 예제처럼 조건문(if) 안에 함수를 바로 넣으면 코드가 아주 우아해집니다.</p>
             </div>
         </section>
-<span class="type">int</span> <span class="func">main</span>() {
-    <span class="func">printf</span>(<span class="str">"--- 자판기 시뮬레이션 ---\n"</span>);
-    <span class="func">makeCoffee</span>(300);  <span class="cmt">// 실패하는 경우</span>
-    <span class="func">makeCoffee</span>(1000); <span class="cmt">// 성공하는 경우</span>
-    
-    <span class="kw">return</span> <span class="type">0</span>;
-}</code></pre>
-
-            <div class="callout">
-                <h4>⚠️ 주의할 점: 함수의 위치</h4>
-                <p>C언어는 코드를 위에서 아래로 읽어 내려갑니다. 따라서 <code>main()</code> 함수에서 <code>makeCoffee()</code>를 사용하려면, 반드시 <strong>main 함수보다 위쪽에 함수를 정의</strong>하거나, 맨 위에 '함수의 원형(Prototype)'을 선언해 주어야 합니다.</p>
-            </div>
-        </section>
-
     </main>
 
 </body>
