@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 06. 스마트 자동 휴지통 - 아두이노 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f59e0b; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #fffbeb; --tip-border: #f59e0b; --border-color: #e2e8f0; --accent-blue: #3b82f6; --accent-green: #10b981; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 사이드바 */
+        .sidebar { width: 300px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.1rem; color: #0f172a; margin-top: 20px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 8px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; font-size: 0.95rem; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #fef3c7; color: var(--primary); font-weight: bold; }
+        
+        /* 본문 영역 */
+        .content { margin-left: 300px; padding: 60px 80px; max-width: 1000px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+        
+        /* 코드 블록 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .kw { color: #f9a8d4; }
+        .func { color: #a7f3d0; }
+        .num { color: #fef08a; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* 콜아웃 박스 */
+        .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout.info { background-color: #f0fdf4; border-left-color: var(--accent-green); }
+        .callout h4 { margin: 0 0 10px 0; color: #b45309; font-size: 1.2rem; }
+        .callout.info h4 { color: var(--accent-green); }
+
+        /* 이미지 컨테이너 */
+        .img-container { text-align: center; margin: 40px 0; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .img-caption { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); font-weight: 500; }
+        
+        .parts-list { display: flex; flex-wrap: wrap; gap: 15px; margin: 20px 0; }
+        .part-item { background: #f1f5f9; padding: 10px 20px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; color: #475569; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>🤖 아두이노 기초</h2>
+        <ul class="nav-list">
+            <li><a href="arduino_01_intro.html">이론 과정 전체보기</a></li>
+        </ul>
+
+        <h2>🏆 미니 프로젝트</h2>
+        <ul class="nav-list">
+            <li><a href="project_01_traffic_light.html">01. 3색 신호등 시스템</a></li>
+            <li><a href="project_02_piano.html">02. 미니 피아노</a></li>
+            <li><a href="project_03_mood_light.html">03. 스마트 무드등</a></li>
+            <li><a href="project_04_alarm.html">04. 레이저 경보기</a></li>
+            <li><a href="project_05_lie_detector.html">05. 거짓말 탐지기</a></li>
+            <li><a href="project_06_smart_trash.html" class="active">06. 스마트 자동 휴지통</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>프로젝트 06: 🗑️ 스마트 자동 휴지통 만들기</h1>
+        <div class="subtitle">초음파 센서로 사람의 손을 감지하고 서보 모터로 뚜껑을 자동으로 여닫는 지능형 가전을 제작합니다.</div>
+
+        <section>
+            <h2>1. 프로젝트 개요</h2>
+            <p>손을 휴지통 가까이 가져가면 뚜껑이 자동으로 열리고, 일정 시간이 지나면 다시 닫히는 시스템입니다. <strong>비접촉 방식</strong>으로 매우 위생적이며, 아두이노의 '입력(센서)'과 '출력(모터)'의 상호작용을 완벽하게 이해할 수 있는 프로젝트입니다.</p>
+            
+            <h3>📦 준비물</h3>
+            <div class="parts-list">
+                <span class="part-item">아두이노 우노 x 1</span>
+                <span class="part-item">초음파 센서 (HC-SR04) x 1</span>
+                <span class="part-item">서보 모터 (SG90) x 1</span>
+                <span class="part-item">빈 상자 또는 작은 휴지통</span>
+                <span class="part-item">점퍼 와이어 & 브레드보드</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. 상세 회로 결선도 (Wiring Diagram)</h2>
+            <p>초음파 센서는 <strong>2번(Trig), 3번(Echo)</strong> 핀에, 서보 모터는 <strong>9번(PWM)</strong> 핀에 연결합니다. 전원선이 복잡하므로 브레드보드의 전원 라인을 잘 활용하세요.</p>
+
+            <div class="img-container">
+                <svg width="100%" max-width="700" height="400" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="280" width="600" height="100" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+                    
+                    <rect x="250" y="20" width="200" height="130" rx="5" fill="#1e293b"/>
+                    <text x="350" y="55" fill="white" font-weight="bold" text-anchor="middle">Arduino Uno</text>
+                    <text x="350" y="100" fill="#ccfbf1" font-size="11" text-anchor="middle">D2 | D3 | ~D9 | 5V | GND</text>
+
+                    <g transform="translate(150, 200)">
+                        <rect x="-40" y="0" width="80" height="40" fill="#3b82f6" rx="3"/>
+                        <circle cx="-20" cy="20" r="12" fill="#1e293b"/>
+                        <circle cx="20" cy="20" r="12" fill="#1e293b"/>
+                        <text x="0" y="55" fill="#334155" font-size="10" font-weight="bold" text-anchor="middle">Ultra Sensor (D2, D3)</text>
+                    </g>
+
+                    <g transform="translate(550, 200)">
+                        <rect x="-30" y="0" width="60" height="40" fill="#1e293b" rx="3"/>
+                        <circle cx="0" cy="20" r="10" fill="#94a3b8"/>
+                        <rect x="-30" y="15" width="60" height="10" fill="#ef4444" rx="2"/>
+                        <text x="0" y="55" fill="#334155" font-size="10" font-weight="bold" text-anchor="middle">Servo Motor (D9)</text>
+                    </g>
+
+                    <path d="M 150 200 L 150 50 L 250 50" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                    <path d="M 550 200 L 550 120 L 450 120" fill="none" stroke="#ef4444" stroke-width="2"/>
+                    
+                    <line x1="350" y1="280" x2="350" y2="150" stroke="#334155" stroke-width="2" stroke-dasharray="4,4"/>
+                    <text x="350" y="330" fill="#64748b" font-size="12" text-anchor="middle">Breadboard 전원 공유</text>
+                </svg>
+                <div class="img-caption">▲ 휴지통 결선도: 센서로 손을 찾고(입력), 모터로 뚜껑을 엽니다(출력).</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. 코드 작성하기</h2>
+            <p>서보 라이브러리를 사용하며, 거리가 <strong>15cm 이내</strong>로 가까워지면 뚜껑을 여는 각도(90도)로 회전시키고 3초 후 닫도록 설계합니다.</p>
+
+<pre><code><span class="kw">#include</span> <span class="str">&lt;Servo.h&gt;</span>
+
+<span class="type">Servo</span> myServo;
+<span class="type">int</span> trigPin = <span class="num">2</span>;
+<span class="type">int</span> echoPin = <span class="num">3</span>;
+
+<span class="kw">void</span> <span class="func">setup</span>() {
+    myServo.<span class="func">attach</span>(<span class="num">9</span>);      <span class="cmt">// 서보모터 9번 핀</span>
+    <span class="func">pinMode</span>(trigPin, OUTPUT);
+    <span class="func">pinMode</span>(echoPin, INPUT);
+    
+    <span class="cmt">// 초기 상태: 뚜껑 닫기</span>
+    myServo.<span class="func">write</span>(<span class="num">0</span>); 
+    <span class="func">Serial.begin</span>(<span class="num">9600</span>);
+}
+
+<span class="kw">void</span> <span class="func">loop</span>() {
+    <span class="cmt">// 1. 초음파로 거리 측정하기</span>
+    <span class="func">digitalWrite</span>(trigPin, LOW);
+    <span class="func">delayMicroseconds</span>(<span class="num">2</span>);
+    <span class="func">digitalWrite</span>(trigPin, HIGH);
+    <span class="func">delayMicroseconds</span>(<span class="num">10</span>);
+    <span class="func">digitalWrite</span>(trigPin, LOW);
+
+    <span class="type">long</span> duration = <span class="func">pulseIn</span>(echoPin, HIGH);
+    <span class="type">int</span> distance = duration * <span class="num">0.034</span> / <span class="num">2</span>;
+
+    <span class="cmt">// 2. 거리에 따른 뚜껑 제어</span>
+    <span class="kw">if</span> (distance &gt; <span class="num">0</span> && distance &lt; <span class="num">15</span>) { <span class="cmt">// 15cm 이내에 손이 오면</span>
+        <span class="func">Serial.println</span>(<span class="str">"Open!"</span>);
+        myServo.<span class="func">write</span>(<span class="num">90</span>); <span class="cmt">// 뚜껑 열기 (90도)</span>
+        <span class="func">delay</span>(<span class="num">3000</span>);       <span class="cmt">// 3초 동안 열어두기</span>
+    } <span class="kw">else</span> {
+        myServo.<span class="func">write</span>(<span class="num">0</span>);  <span class="cmt">// 평상시에는 닫기 (0도)</span>
+    }
+    
+    <span class="func">delay</span>(<span class="num">100</span>);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>4. 프로젝트 메커니즘 설명</h2>
+            <div class="img-container">
+                <svg width="100%" max-width="500" height="200" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="100" width="200" height="80" fill="#f1f5f9" stroke="#cbd5e1"/>
+                    <line x1="150" y1="100" x2="350" y2="100" stroke="#334155" stroke-width="4"/>
+                    <path d="M 350 100 L 350 20" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+                    <text x="360" y="60" fill="#ef4444" font-weight="bold">Lid Open (90°)</text>
+                    <path d="M 40 40 Q 100 0 150 40" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,4"/>
+                    <text x="20" y="30" fill="#3b82f6" font-weight="bold">Hand Detected!</text>
+                </svg>
+                <div class="img-caption">▲ 작동 원리: 손이 감지되면 서보 모터가 축을 회전시켜 뚜껑을 밀어 올립니다.</div>
+            </div>
+
+            <div class="callout info">
+                <h4>💡 설치 팁: 서보 모터 고정</h4>
+                <p>실제 뚜껑을 여닫기 위해서는 서보 모터의 날개(Horn) 부분에 긴 막대나 철사를 붙여 뚜껑을 들어 올리는 지렛대 구조를 만들어야 합니다. 뚜껑이 너무 무거우면 서보 모터가 힘겨워할 수 있으니 가벼운 종이나 플라스틱 뚜껑을 추천합니다.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>5. 🎯 심화 챌린지: 상태 알림 LED</h2>
+            <p>뚜껑이 열려 있을 때는 **초록색 LED**가 켜지고, 닫혀 있을 때는 **빨간색 LED**가 켜지도록 코드를 업그레이드해 보세요. 사용자가 멀리서도 휴지통의 상태를 한눈에 확인할 수 있어 더욱 편리해집니다!</p>
+        </section>
+    </main>
+</body>
+</html>
