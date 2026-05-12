@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04. 시리얼 통신 - 아두이노 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0d9488; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #f0fdf4; --tip-border: #10b981; --border-color: #e2e8f0; --accent-red: #ef4444; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 사이드바 */
+        .sidebar { width: 300px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.1rem; color: #0f172a; margin-top: 20px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 8px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; font-size: 0.95rem; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #ccfbf1; color: var(--primary); font-weight: bold; }
+        
+        /* 본문 영역 */
+        .content { margin-left: 300px; padding: 60px 80px; max-width: 1000px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+        
+        /* 코드 블록 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .kw { color: #f9a8d4; }
+        .func { color: #a7f3d0; }
+        .num { color: #fef08a; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* 콜아웃 박스 */
+        .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout.danger { background-color: #fef2f2; border-left-color: var(--accent-red); }
+        .callout.concept { background-color: #f5f3ff; border-left-color: var(--accent-purple); }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .callout.danger h4 { color: var(--accent-red); }
+        .callout.concept h4 { color: var(--accent-purple); }
+
+        /* 이미지 컨테이너 */
+        .img-container { text-align: center; margin: 40px 0; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .img-caption { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); font-weight: 500; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
+        th { background-color: var(--sidebar-bg); color: var(--primary); }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>💻 C언어 기초</h2>
+        <ul class="nav-list">
+            <li><a href="index.html">C언어 과정 홈</a></li>
+        </ul>
+
+        <h2>🤖 아두이노 제어</h2>
+        <ul class="nav-list">
+            <li><a href="arduino_01_intro.html">01. 아두이노의 세계로</a></li>
+            <li><a href="arduino_02_digital.html">02. 디지털 입출력</a></li>
+            <li><a href="arduino_03_analog.html">03. 아날로그의 이해</a></li>
+            <li><a href="arduino_04_serial.html" class="active">04. 시리얼 통신</a></li>
+            <li><a href="arduino_05_sensor.html">05. 감각 불어넣기</a></li>
+            <li><a href="arduino_06_motor.html">06. 움직임 만들기</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>04. 시리얼 통신: 컴퓨터와 대화하기</h1>
+        <div class="subtitle">아두이노가 센서로 느낀 온도, 빛의 밝기를 우리에게 문자로 알려주는 통신 기술을 배웁니다.</div>
+
+        <section>
+            <h2>1. 시리얼 통신(Serial Communication)이란?</h2>
+            <p>시리얼(Serial)은 '직렬'이라는 뜻입니다. 데이터를 한 번에 하나씩 줄을 세워 전송하는 방식이죠. 우리가 아두이노와 컴퓨터를 연결할 때 쓰는 파란색 <strong>USB 케이블</strong>이 바로 이 시리얼 통신을 위한 튼튼한 다리 역할을 합니다.</p>
+
+            <div class="img-container">
+                <svg width="100%" max-width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: 0 auto;">
+                    <rect x="50" y="50" width="100" height="80" rx="5" fill="#1e293b"/>
+                    <rect x="70" y="130" width="60" height="20" fill="#64748b"/>
+                    <rect x="40" y="150" width="120" height="10" rx="2" fill="#334155"/>
+                    <text x="100" y="100" fill="white" font-size="16" font-weight="bold" text-anchor="middle">Computer</text>
+                    
+                    <rect x="450" y="60" width="100" height="70" rx="5" fill="#0d9488"/>
+                    <circle cx="530" cy="80" r="10" fill="#ccfbf1"/>
+                    <text x="500" y="100" fill="white" font-size="16" font-weight="bold" text-anchor="middle">Arduino</text>
+                    
+                    <line x1="160" y1="80" x2="435" y2="80" stroke="#3b82f6" stroke-width="4" stroke-dasharray="10,5"/>
+                    <polygon points="435,75 445,80 435,85" fill="#3b82f6"/>
+                    <text x="300" y="70" fill="#3b82f6" font-size="14" font-weight="bold" text-anchor="middle">TX (송신) ➡ RX (수신)</text>
+                    
+                    <line x1="440" y1="120" x2="165" y2="120" stroke="#ef4444" stroke-width="4" stroke-dasharray="10,5"/>
+                    <polygon points="165,115 155,120 165,125" fill="#ef4444"/>
+                    <text x="300" y="140" fill="#ef4444" font-size="14" font-weight="bold" text-anchor="middle">RX (수신) ⬅ TX (송신)</text>
+                </svg>
+                <div class="img-caption">▲ 통신의 핵심: 말하는 입(TX, Transmit)과 듣는 귀(RX, Receive)가 서로 엇갈려 연결되어야 합니다.</div>
+            </div>
+
+            <div class="callout concept">
+                <h4>💡 디지털 0번, 1번 핀의 비밀</h4>
+                <p>아두이노 보드의 <strong>디지털 0번(RX)과 1번(TX) 핀</strong>은 컴퓨터와의 USB 시리얼 통신을 위해 예약된 핀입니다. 따라서 컴퓨터와 데이터를 주고받을 때는 가급적 0번과 1번 핀에 다른 부품(LED, 버튼 등)을 연결하지 않는 것이 좋습니다!</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. 대화의 첫걸음: 통신 속도(Baud Rate) 맞추기</h2>
+            <p>외국인과 대화할 때 말하는 속도가 너무 빠르면 알아듣기 힘들죠? 컴퓨터와 아두이노도 대화를 시작하기 전에 <strong>1초에 몇 개의 신호를 주고받을지 속도</strong>를 맞춰야 합니다. 이를 '보드레이트(Baud Rate)'라고 합니다.</p>
+            <p>아두이노에서는 주로 <strong>9600 bps</strong> (1초에 9600비트 전송)를 표준 속도로 사용합니다.</p>
+
+            <div class="callout danger">
+                <h4>⚠️ 외계어가 출력되나요?</h4>
+                <p>시리얼 모니터 창을 띄웠는데 <code>%#@</code> 같은 이상한 문자가 깨져서 나온다면, 아두이노 코드의 속도(예: 9600)와 시리얼 모니터 프로그램 우측 하단의 속도가 <strong>서로 다르게 설정되어 있기 때문</strong>입니다. 이 두 숫자를 똑같이 맞춰주세요!</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. 💡 실습: 컴퓨터로 메시지 보내기</h2>
+            <p>아두이노가 컴퓨터(시리얼 모니터) 쪽으로 텍스트와 숫자를 전송하는 기초 코드를 작성해 봅시다.</p>
+
+<pre><code><span class="kw">void</span> <span class="func">setup</span>() {
+    <span class="cmt">// 1. 대화 시작 선언! "컴퓨터야, 9600 속도로 통신하자!"</span>
+    <span class="func">Serial.begin</span>(<span class="num">9600</span>); 
+    
+    <span class="cmt">// 2. 전원이 켜졌을 때 딱 한 번 인사하기</span>
+    <span class="func">Serial.println</span>(<span class="str">"Hello, Arduino! 시리얼 통신 시작!"</span>);
+}
+
+<span class="kw">void</span> <span class="func">loop</span>() {
+    <span class="type">int</span> timeSec = <span class="func">millis</span>() / <span class="num">1000</span>; <span class="cmt">// 켜진 후 흐른 시간(초) 계산</span>
+    
+    <span class="func">Serial.print</span>(<span class="str">"아두이노가 켜진 지 "</span>);
+    <span class="func">Serial.print</span>(timeSec);
+    <span class="func">Serial.println</span>(<span class="str">"초 지났습니다."</span>);
+    
+    <span class="func">delay</span>(<span class="num">1000</span>); <span class="cmt">// 1초마다 출력</span>
+}</code></pre>
+
+            <h3>🔍 핵심 함수 분석</h3>
+            <table>
+                <tr>
+                    <th>함수명</th>
+                    <th>설명</th>
+                </tr>
+                <tr>
+                    <td><code>Serial.begin(9600);</code></td>
+                    <td>통신 속도를 9600으로 설정하고 통신을 시작합니다. (setup에 필수)</td>
+                </tr>
+                <tr>
+                    <td><code>Serial.print("내용");</code></td>
+                    <td>내용을 출력합니다. (출력 후 줄을 바꾸지 않고 이어서 씁니다.)</td>
+                </tr>
+                <tr>
+                    <td><code>Serial.println("내용");</code></td>
+                    <td>내용을 출력한 뒤 <strong>엔터(줄바꿈)</strong>를 쳐서 다음 줄로 넘어갑니다. (가장 많이 씀!)</td>
+                </tr>
+            </table>
+
+            <div class="img-container">
+                <svg width="100%" max-width="500" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 5px;">
+                    <rect x="0" y="0" width="400" height="30" fill="#f1f5f9"/>
+                    <text x="10" y="20" fill="#334155" font-size="12" font-weight="bold">🔍 COM3 (Arduino Uno)</text>
+                    <rect x="0" y="30" width="400" height="140" fill="#ffffff"/>
+                    <text x="10" y="55" fill="#334155" font-family="monospace" font-size="13">Hello, Arduino! 시리얼 통신 시작!</text>
+                    <text x="10" y="75" fill="#334155" font-family="monospace" font-size="13">아두이노가 켜진 지 1초 지났습니다.</text>
+                    <text x="10" y="95" fill="#334155" font-family="monospace" font-size="13">아두이노가 켜진 지 2초 지났습니다.</text>
+                    <text x="10" y="115" fill="#334155" font-family="monospace" font-size="13">아두이노가 켜진 지 3초 지났습니다.</text>
+                    <rect x="0" y="170" width="400" height="30" fill="#f8fafc"/>
+                    <text x="320" y="190" fill="#64748b" font-size="11">9600 보드 레이트 ▼</text>
+                </svg>
+                <div class="img-caption">▲ 아두이노 IDE 우측 상단의 돋보기 아이콘을 누르면 나오는 시리얼 모니터 창의 모습</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>4. 🎯 심화 미션: 컴퓨터로 아두이노 명령하기</h2>
+            <p>이번에는 반대로, <strong>컴퓨터 키보드로 숫자를 입력해서 아두이노의 LED를 켜고 끄는 마법</strong>을 부려보겠습니다. 키보드로 '1'을 전송하면 LED가 켜지고, '0'을 전송하면 LED가 꺼집니다.</p>
+
+<pre><code><span class="kw">void</span> <span class="func">setup</span>() {
+    <span class="func">Serial.begin</span>(<span class="num">9600</span>);
+    <span class="func">pinMode</span>(<span class="num">13</span>, OUTPUT); <span class="cmt">// 내장 LED 핀</span>
+    <span class="func">Serial.println</span>(<span class="str">"1을 입력하면 켜지고, 0을 입력하면 꺼집니다."</span>);
+}
+
+<span class="kw">void</span> <span class="func">loop</span>() {
+    <span class="cmt">// Serial.available() : 아두이노의 수신함(RX)에 도착한 문자가 있는지 확인합니다.</span>
+    <span class="kw">if</span> (<span class="func">Serial.available</span>() &gt; <span class="num">0</span>) {
+        
+        <span class="cmt">// Serial.read() : 도착한 문자를 1개 읽어옵니다.</span>
+        <span class="type">char</span> command = <span class="func">Serial.read</span>(); 
+        
+        <span class="kw">if</span> (command == <span class="str">'1'</span>) {
+            <span class="func">digitalWrite</span>(<span class="num">13</span>, HIGH);
+            <span class="func">Serial.println</span>(<span class="str">"LED가 켜졌습니다!"</span>);
+        } 
+        <span class="kw">else</span> <span class="kw">if</span> (command == <span class="str">'0'</span>) {
+            <span class="func">digitalWrite</span>(<span class="num">13</span>, LOW);
+            <span class="func">Serial.println</span>(<span class="str">"LED가 꺼졌습니다!"</span>);
+        }
+    }
+}</code></pre>
+            <div class="callout concept">
+                <h4>💡 <code>'1'</code> 과 <code>1</code>은 완전히 다릅니다!</h4>
+                <p>C언어 과정에서 배웠듯이 작은따옴표로 감싼 <code>'1'</code>은 수학적인 숫자 1이 아니라 <strong>"문자 1(아스키코드 값 49)"</strong>을 의미합니다. 시리얼 모니터로 우리가 키보드를 쳐서 보내는 것은 모두 '문자' 데이터이므로, 조건문에서 반드시 작은따옴표를 붙여서 <code>command == '1'</code> 처럼 비교해야 합니다.</p>
+            </div>
+        </section>
+
+    </main>
+</body>
+</html>
