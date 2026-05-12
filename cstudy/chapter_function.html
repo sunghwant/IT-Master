@@ -3,72 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>06. 함수 (Function) 이해하기 - C언어 마스터</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>06. 함수 (Function) - C언어 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 기본 설정 */
+        :root {
+            --primary: #2563eb;
+            --sidebar-bg: #f8fafc;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --code-bg: #1e293b;
+            --tip-bg: #eff6ff;
+            --tip-border: #60a5fa;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            line-height: 1.6;
+        }
+
+        /* 왼쪽 목차 사이드바 */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            overflow-y: auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 10px; }
+        .nav-list a {
+            text-decoration: none;
+            color: var(--text-light);
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+
+        /* 오른쪽 본문 영역 */
+        .content {
+            margin-left: 280px; /* 사이드바 너비만큼 띄움 */
+            padding: 60px 80px;
+            max-width: 900px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 본문 타이포그래피 */
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+
+        /* 팁/노트 박스 */
+        .callout {
+            background-color: var(--tip-bg);
+            border-left: 5px solid var(--tip-border);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+        }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+
+        /* 코드 블록 */
+        pre {
+            background-color: var(--code-bg);
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        code { font-family: 'Fira Code', monospace; background-color: #f1f5f9; color: #ef4444; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        pre code { background-color: transparent; color: inherit; padding: 0; }
+
+        /* 하이라이트 색상 (간단한 수동 문법 강조) */
+        .kw { color: #f9a8d4; } /* Keyword */
+        .type { color: #818cf8; } /* Type */
+        .func { color: #a7f3d0; } /* Function */
+        .str { color: #fca5a5; } /* String */
+        .cmt { color: #94a3b8; font-style: italic; } /* Comment */
+
+        /* 이미지 스타일 */
+        .img-container { text-align: center; margin: 40px 0; }
+        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
+
+    </style>
 </head>
 <body>
-    <div class="container">
-        <a href="index.html" style="text-decoration: none; color: #2563eb;">← 목차로 돌아가기</a>
-        
-        <header>
-            <h1>06. 함수 (Function) 이해하기</h1>
-            <p>코드의 재사용성을 높여주는 마법의 상자, 함수에 대해 알아봅시다.</p>
-        </header>
 
-        <main>
-            <section>
-                <h2>1. 함수란 무엇인가요?</h2>
-                <p>함수(Function)는 특정한 작업을 수행하도록 독립적으로 설계된 코드의 블록입니다. 자판기에 동전을 넣고 버튼을 누르면 음료수가 나오는 것과 같습니다.</p>
+    <aside class="sidebar">
+        <h2>📚 C언어 목차</h2>
+        <ul class="nav-list">
+            <li><a href="#">01. Hello World</a></li>
+            <li><a href="#">02. 변수와 자료형</a></li>
+            <li><a href="#">03. 연산자의 세계</a></li>
+            <li><a href="#">04. 조건문 (if, switch)</a></li>
+            <li><a href="#">05. 반복문 (for, while)</a></li>
+            <li><a href="chapter_function.html" class="active">06. 함수 (Function)</a></li>
+            <li><a href="#">07. 배열 (Array)</a></li>
+            <li><a href="#">08. 포인터 (Pointer)</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>06. 함수 (Function): 코드의 마법 공장</h1>
+        <div class="subtitle">반복되는 코드를 줄이고, 프로그램을 레고 블록처럼 조립해 봅시다.</div>
+
+        <section>
+            <h2>1. 함수란 무엇인가요?</h2>
+            <p>프로그래밍에서 <strong>함수(Function)</strong>는 특정한 작업을 수행하도록 독립적으로 설계된 코드의 묶음입니다. 가장 이해하기 쉬운 비유는 <strong>'마법 물약 제조기'</strong>입니다.</p>
+            
+            <p>여러분이 사과와 허브를 제조기에 넣고 버튼을 누르면, 기계 내부에서 알아서 끓이고 섞은 뒤 '체력 회복 물약'을 뚝딱 만들어냅니다. 여기서 사과와 허브는 <code>입력(매개변수)</code>, 기계 내부의 동작은 <code>코드</code>, 완성된 물약은 <code>출력(반환값)</code>이 됩니다.</p>
+
+            <div class="img-container">
                 
-                <img src="images/function_diagram.png" alt="함수의 입력과 출력 개념도" class="content-img">
+                <div class="img-caption">▲ 함수의 개념: 입력(Input) -> 처리(Process) -> 출력(Output)</div>
+            </div>
 
-                <p>위 그림처럼 함수는 <strong>입력(인수)</strong>을 받아 내부에서 처리한 후, <strong>출력(반환값)</strong>을 내보냅니다.</p>
-            </section>
+            <div class="callout">
+                <h4>💡 왜 함수를 써야 할까요?</h4>
+                <p><strong>1. 재사용성:</strong> 똑같은 코드를 매번 다시 적을 필요 없이, 한 번 만들어두고 필요할 때마다 이름만 불러서(호출해서) 쓸 수 있습니다.<br>
+                <strong>2. 가독성:</strong> 코드를 목적에 맞게 쪼개어 놓기 때문에, 책의 목차를 보듯 프로그램의 흐름을 쉽게 파악할 수 있습니다.</p>
+            </div>
+        </section>
 
-            <section>
-                <h2>2. 함수의 기본 구조</h2>
-                <p>C언어에서 함수를 만들 때는 반환할 자료형, 함수의 이름, 그리고 매개변수를 지정해야 합니다.</p>
-                
-<pre><code>int add(int a, int b) {
-    int result = a + b;
-    return result;
+        <section>
+            <h2>2. 함수의 해부학 (구조)</h2>
+            <p>C언어에서 함수를 만들 때는 다음 3가지 요소가 반드시 필요합니다.</p>
+            <ul>
+                <li><strong>반환형 (Return Type):</strong> 이 기계가 최종적으로 내뱉을 결과물의 형태 (정수형 int, 실수형 float, 없다면 void)</li>
+                <li><strong>함수명 (Function Name):</strong> 이 기계를 부를 이름 (예: add, makePotion 등)</li>
+                <li><strong>매개변수 (Parameters):</strong> 기계에 넣을 재료들</li>
+            </ul>
+
+<pre><code><span class="type">int</span> <span class="func">makePotion</span>(<span class="type">int</span> herb, <span class="type">int</span> water) {
+    <span class="cmt">// 내부에서 수행할 작업</span>
+    <span class="type">int</span> potion = herb + water;
+    
+    <span class="cmt">// 결과물을 반환</span>
+    <span class="kw">return</span> potion;
 }</code></pre>
-            </section>
+        </section>
 
-            <section>
-                <h2>3. 응용 예제</h2>
-                <p>지금까지 배운 것을 토대로 두 숫자를 더하고 빼는 계산기 함수를 만들어 보겠습니다.</p>
+        <section>
+            <h2>3. 🚀 창의적 응용 예제 1: RPG 게임 데미지 계산기</h2>
+            <p>단순한 더하기가 아닌, 실제 게임에서 쓰일법한 예제를 만들어 볼까요? 용사가 몬스터를 공격할 때, <strong>기본 공격력</strong>과 <strong>무기의 강화 수치</strong>를 조합해 최종 데미지를 계산하는 함수를 만들어 봅시다.</p>
 
-                <div class="example-box">
-                    <h4>💡 실전 응용: 사칙연산 계산기 만들기</h4>
-                    <p><code>main</code> 함수에서 우리가 만든 <code>add</code> 함수와 <code>sub</code> 함수를 호출해 봅시다.</p>
-<pre><code>#include &lt;stdio.h&gt;
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
 
-// 더하기 함수
-int add(int a, int b) {
-    return a + b;
+<span class="cmt">// ⚔️ 데미지 계산 함수</span>
+<span class="type">int</span> <span class="func">calcDamage</span>(<span class="type">int</span> baseAttack, <span class="type">int</span> weaponLevel) {
+    <span class="type">int</span> finalDamage;
+    <span class="cmt">// 강화 수치 1당 데미지가 15씩 증가한다고 가정</span>
+    finalDamage = baseAttack + (weaponLevel * 15);
+    <span class="kw">return</span> finalDamage;
 }
 
-// 빼기 함수
-int sub(int a, int b) {
-    return a - b;
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> myAttack = 50;   <span class="cmt">// 내 기본 공격력</span>
+    <span class="type">int</span> swordLevel = 3;  <span class="cmt">// +3 강화된 검</span>
+
+    <span class="cmt">// 함수 호출!</span>
+    <span class="type">int</span> damage = <span class="func">calcDamage</span>(myAttack, swordLevel);
+
+    <span class="func">printf</span>(<span class="str">"몬스터에게 %d의 데미지를 입혔습니다!\n"</span>, damage);
+    
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+            
+            <p>이렇게 <code>calcDamage</code>라는 함수를 하나 만들어두면, 파티원이 4명이어도 이 함수 하나로 4명 모두의 데미지를 쉽게 계산할 수 있겠죠?</p>
+        </section>
+
+        <section>
+            <h2>4. ☕ 창의적 응용 예제 2: 반환값이 없는 함수 (void)</h2>
+            <p>모든 기계가 물건을 뱉어내는 것은 아닙니다. 예를 들어 '청소기'는 작동을 할 뿐이지, 새로운 물건을 반환하지는 않죠. 이렇게 <strong>행동만 하고 돌려주는 값이 없을 때</strong>는 반환형으로 <code>void</code>(비어있음)를 사용합니다.</p>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="cmt">// 커피를 만들어주는 자판기 함수 (돌려주는 데이터는 없고, 화면에 출력만 함)</span>
+<span class="type">void</span> <span class="func">makeCoffee</span>(<span class="type">int</span> coins) {
+    <span class="kw">if</span> (coins &gt;= 500) {
+        <span class="func">printf</span>(<span class="str">"☕ 위잉~ 따뜻한 아메리카노가 나왔습니다!\n"</span>);
+    } <span class="kw">else</span> {
+        <span class="func">printf</span>(<span class="str">"❌ 금액이 부족합니다. (500원 필요)\n"</span>);
+    }
 }
 
-int main() {
-    int num1 = 10, num2 = 5;
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="func">printf</span>(<span class="str">"--- 자판기 시뮬레이션 ---\n"</span>);
+    <span class="func">makeCoffee</span>(300);  <span class="cmt">// 실패하는 경우</span>
+    <span class="func">makeCoffee</span>(1000); <span class="cmt">// 성공하는 경우</span>
     
-    printf("%d + %d = %d\n", num1, num2, add(num1, num2));
-    printf("%d - %d = %d\n", num1, num2, sub(num1, num2));
-    
-    return 0;
+    <span class="kw">return</span> <span class="type">0</span>;
 }</code></pre>
-                </div>
-            </section>
-        </main>
 
-        <footer>
-            <p>&copy; 2026 C언어 스터디. All rights reserved.</p>
-        </footer>
-    </div>
+            <div class="callout">
+                <h4>⚠️ 주의할 점: 함수의 위치</h4>
+                <p>C언어는 코드를 위에서 아래로 읽어 내려갑니다. 따라서 <code>main()</code> 함수에서 <code>makeCoffee()</code>를 사용하려면, 반드시 <strong>main 함수보다 위쪽에 함수를 정의</strong>하거나, 맨 위에 '함수의 원형(Prototype)'을 선언해 주어야 합니다.</p>
+            </div>
+        </section>
+
+    </main>
+
 </body>
 </html>
