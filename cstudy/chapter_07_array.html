@@ -6,7 +6,32 @@
     <title>07. 배열 (Array) - C언어 마스터 가이드</title>
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <style> /* 위와 동일한 스타일 적용 */ </style>
+    <style>
+        /* 완벽한 프레임을 위한 전체 CSS */
+        :root { --primary: #2563eb; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #eff6ff; --tip-border: #60a5fa; --border-color: #e2e8f0; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 왼쪽 사이드바 메뉴 */
+        .sidebar { width: 280px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 10px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+        
+        /* 오른쪽 본문 내용 */
+        .content { margin-left: 280px; padding: 60px 80px; max-width: 900px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+        
+        /* 코드 블록 & 이미지 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .img-container { text-align: center; margin: 40px 0; }
+        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
+    </style>
 </head>
 <body>
     <aside class="sidebar">
@@ -28,21 +53,23 @@
             <h2>1. 배열이란 무엇인가요?</h2>
             <p>변수가 상자 하나라면, <strong>배열</strong>은 같은 크기의 상자들이 기차처럼 쭉 이어져 있는 형태입니다. 중요한 점은 상자 번호(인덱스)가 <strong>0번부터 시작</strong>한다는 것이죠!</p>
             <div class="img-container">
-                
+                <img src="./images/array_index_diagram.png" alt="배열 인덱스 구조">
                 <div class="img-caption">▲ 배열: 여러 데이터를 한 번에 관리하는 효율적인 바구니</div>
             </div>
         </section>
         <section>
             <h2>2. 🎒 창의적 예제: RPG 아이템 인벤토리</h2>
 <pre><code>#include &lt;stdio.h&gt;
+
 int main() {
     // 5개의 아이템 수량을 담는 배열
     int inventory[5] = {10, 20, 0, 5, 1};
 
     printf("--- 나의 인벤토리 ---\n");
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i &lt; 5; i++) {
         printf("%d번 칸 아이템 수량: %d개\n", i, inventory[i]);
     }
+    
     return 0;
 }</code></pre>
         </section>

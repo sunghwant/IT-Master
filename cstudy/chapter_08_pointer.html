@@ -6,7 +6,34 @@
     <title>08. 포인터 입문 - C언어 마스터 가이드</title>
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <style> /* 위와 동일한 스타일 적용 */ </style>
+    <style>
+        /* 완벽한 프레임을 위한 전체 CSS */
+        :root { --primary: #2563eb; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #eff6ff; --tip-border: #60a5fa; --border-color: #e2e8f0; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 왼쪽 사이드바 메뉴 */
+        .sidebar { width: 280px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 10px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+        
+        /* 오른쪽 본문 내용 */
+        .content { margin-left: 280px; padding: 60px 80px; max-width: 900px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+        
+        /* 코드 블록 & 박스 & 이미지 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .img-container { text-align: center; margin: 40px 0; }
+        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
+    </style>
 </head>
 <body>
     <aside class="sidebar">
@@ -28,15 +55,16 @@
             <h2>1. 포인터란 무엇인가요?</h2>
             <p>포인터는 데이터 자체가 아니라, 데이터가 저장된 <strong>'메모리 주소'</strong>를 가리키는 변수입니다. 마치 보물이 들어있는 상자가 아니라, <strong>그 상자가 어디 있는지 알려주는 보물지도</strong>와 같습니다.</p>
             <div class="img-container">
-                
+                <img src="./images/pointer_address_diagram.png" alt="포인터 주소 개념도">
                 <div class="img-caption">▲ 포인터: "데이터가 어디 있지?" 주소를 찾아가는 나침반</div>
             </div>
         </section>
         <section>
             <h2>2. 🗺️ 창의적 예제: 보물찾기 (주소 연산)</h2>
 <pre><code>#include &lt;stdio.h&gt;
+
 int main() {
-    int gold = 1000;      // 실제 금 상자
+    int gold = 1000;     // 실제 금 상자
     int *map = &gold;    // 금 상자의 위치를 기록한 지도 (포인터)
 
     printf("상자의 실제 내용물: %d골드\n", gold);
