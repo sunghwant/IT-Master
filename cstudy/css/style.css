@@ -1,0 +1,83 @@
+/* 기본 폰트 및 설정 (가독성 높은 폰트 사용) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+    --primary-color: #2563eb;
+    --bg-color: #f8fafc;
+    --text-color: #334155;
+    --code-bg: #1e293b;
+    --box-bg: #eff6ff;
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+}
+
+/* 컨테이너 중앙 정렬 및 여백 */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* 헤더 및 제목 스타일 */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+h1 { color: #0f172a; font-size: 2.2rem; }
+h2 { color: var(--primary-color); margin-top: 40px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+h3 { color: #334155; margin-top: 30px; }
+
+/* 목차 리스트 스타일 */
+.toc-list { list-style: none; padding: 0; }
+.toc-list li { margin-bottom: 15px; font-size: 1.1rem; }
+.toc-list a { text-decoration: none; color: #334155; transition: color 0.3s; font-weight: 500; }
+.toc-list a:hover { color: var(--primary-color); }
+
+/* 응용 예제 박스 */
+.example-box {
+    background-color: var(--box-bg);
+    border-left: 4px solid var(--primary-color);
+    padding: 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+.example-box h4 { margin-top: 0; color: var(--primary-color); }
+
+/* 코드 블록 스타일 (다크 테마) */
+pre {
+    background-color: var(--code-bg);
+    color: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+}
+
+code { font-family: 'Fira Code', monospace; }
+
+/* 본문 내 이미지 스타일 */
+.content-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 30px auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+footer { text-align: center; margin-top: 50px; font-size: 0.9rem; color: #94a3b8; }
