@@ -7,22 +7,35 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* 기존 스타일 동일 적용 */
-        :root { --primary: #2563eb; --sidebar-bg: #f8fafc; --text-main: #334155; --code-bg: #1e293b; --tip-bg: #eff6ff; --tip-border: #60a5fa; --border-color: #e2e8f0; }
+        :root { --primary: #2563eb; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #eff6ff; --tip-border: #60a5fa; --border-color: #e2e8f0; --accent-orange: #f59e0b; }
         body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 사이드바 레이아웃 유지 */
         .sidebar { width: 280px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
         .sidebar h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
         .nav-list { list-style: none; padding: 0; margin: 0; }
         .nav-list li { margin-bottom: 10px; }
-        .nav-list a { text-decoration: none; color: #64748b; display: block; padding: 8px 12px; border-radius: 6px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; }
         .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+        
+        /* 본문 레이아웃 */
         .content { margin-left: 280px; padding: 60px 80px; max-width: 900px; width: 100%; box-sizing: border-box; }
-        h1 { font-size: 2.5rem; color: #0f172a; }
+        h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
         h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; font-family: 'Fira Code', monospace; margin: 20px 0; }
+        h3 { font-size: 1.4rem; color: #1e293b; margin-top: 30px; }
+        p { font-size: 1.1rem; margin-bottom: 20px; }
+
+        /* 표 스타일 */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: center; }
+        th { background-color: var(--sidebar-bg); color: var(--primary); }
+        
+        /* 코드 및 박스 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; font-family: 'Fira Code', monospace; margin: 20px 0; overflow-x: auto; }
         .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
         .img-container { text-align: center; margin: 40px 0; }
-        .img-caption { margin-top: 10px; font-size: 0.95rem; color: #64748b; }
+        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .img-caption { margin-top: 10px; font-size: 0.95rem; color: #64748b; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -39,27 +52,118 @@
             <li><a href="chapter_08_pointer.html">08. 포인터 (Pointer)</a></li>
         </ul>
     </aside>
+
     <main class="content">
         <h1>02. 변수와 자료형: 데이터 마법 상자</h1>
+        
         <section>
             <h2>1. 변수(Variable)란?</h2>
-            <p>변수는 데이터를 담기 위해 메모리에 이름을 붙인 <strong>'상자'</strong>입니다. 이 상자에 숫자를 넣으면 정수형 변수, 글자를 넣으면 문자형 변수가 됩니다.</p>
+            <p>변수는 데이터를 담기 위해 메모리에 이름을 붙인 <strong>'상자'</strong>입니다. 컴퓨터는 이 상자의 이름을 통해 메모리 주소를 일일이 기억하지 않고도 데이터를 쉽게 꺼내 씁니다.</p>
             <div class="img-container">
-                
+                <img src="./images/variable_box_concept.png" alt="변수와 메모리 상자 개념도">
                 <div class="img-caption">▲ 변수: 메모리라는 거대한 창고에 라벨(이름)을 붙인 상자를 만드는 것</div>
             </div>
         </section>
-        <section>
-            <h2>2. 🎨 창의적 예제: 용사의 스테이터스</h2>
-<pre><code>#include &lt;stdio.h&gt;
-int main() {
-    int level = 10;          // 정수 상자 (레벨)
-    float attack = 12.5;     // 실수 상자 (공격력)
-    char rank = 'S';         // 문자 상자 (등급)
 
-    printf("용사의 등급: %c\n", rank);
-    printf("현재 레벨: %d\n", level);
-    printf("현재 공격력: %.1f\n", attack);
+        <section>
+            <h2>2. 자료형(Data Type)의 종류와 크기</h2>
+            <p>상자의 크기가 담을 물건에 따라 다르듯, C언어도 데이터의 종류에 따라 메모리 크기를 다르게 사용합니다.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>종류</th>
+                        <th>키워드</th>
+                        <th>크기(Byte)</th>
+                        <th>표현 범위</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>정수형</td>
+                        <td><strong>int</strong></td>
+                        <td>4 byte</td>
+                        <td>-2,147,483,648 ~ 2,147,483,647</td>
+                    </tr>
+                    <tr>
+                        <td>문자형</td>
+                        <td><strong>char</strong></td>
+                        <td>1 byte</td>
+                        <td>-128 ~ 127 (또는 ASCII 코드)</td>
+                    </tr>
+                    <tr>
+                        <td>실수형</td>
+                        <td><strong>float</strong></td>
+                        <td>4 byte</td>
+                        <td>소수점 약 7자리까지</td>
+                    </tr>
+                    <tr>
+                        <td>실수형(배정밀도)</td>
+                        <td><strong>double</strong></td>
+                        <td>8 byte</td>
+                        <td>소수점 약 15자리까지</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout">
+                <h4>💡 왜 int의 범위가 저 숫자인가요?</h4>
+                <p>4바이트는 32비트입니다. 2의 32승은 약 42억인데, 이를 반으로 나누어 음수와 양수를 표현하기 때문에 약 -21억에서 +21억 사이의 범위를 갖게 됩니다.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. 아스키코드(ASCII)와 문자의 비밀</h2>
+            <p>사실 컴퓨터는 'A'라는 글자를 모릅니다. 대신 숫자 <strong>65</strong>를 'A'라고 약속했을 뿐이죠. 이 약속된 표를 <strong>아스키코드</strong>라고 합니다.</p>
+            
+            <h3>숫자가 문자로 변하는 원리</h3>
+            <p>동일한 메모리 값이라도 우리가 <strong>서식 지정자</strong>를 통해 어떻게 해석하느냐에 따라 결과가 달라집니다.</p>
+            <ul>
+                <li><strong>%d</strong>: 메모리의 값을 '정수'로 해석해서 보여줘!</li>
+                <li><strong>%c</strong>: 메모리의 값을 '아스키코드 문자로' 해석해서 보여줘!</li>
+            </ul>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    char myChar = 'A'; // 내부적으로는 숫자 65 저장
+
+    printf("정수형 출력(%%d): %d\n", myChar); // 65 출력
+    printf("문자형 출력(%%c): %c\n", myChar); // A 출력
+
+    // 숫자 97을 넣고 문자로 출력하면?
+    int myNum = 97;
+    printf("97은 문자로 무엇일까? : %c\n", myNum); // a 출력
+    return 0;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>4. 문자열(String) 형</h2>
+            <p>C언어에는 <code>string</code>이라는 기본 자료형이 없습니다. 대신 <strong>문자(char)의 배열</strong>을 사용합니다. 문자열의 끝을 알리기 위해 마지막에는 항상 눈에 보이지 않는 <code>\0</code>(널 문자)가 들어갑니다.</p>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    // 문자열은 큰따옴표("")를 사용합니다.
+    char name[] = "Master"; 
+    
+    printf("나의 이름은 %s입니다.\n", name); // %s는 문자열(String) 서식 지정자
+    return 0;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>5. ⚔️ 실전 예제: 용사 데이터 시트</h2>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int hp = 2147483647;      // int가 가질 수 있는 최대치
+    double exp = 98.456789;   // 정밀한 경험치
+    char grade = 'S';         // 등급
+    char title[] = "초보 용사"; // 문자열
+
+    printf("[%s Status]\n", title);
+    printf("체력: %d / 등급: %c\n", hp, grade);
+    printf("경험치: %.4f%%\n", exp); // 소수점 4자리까지
+
     return 0;
 }</code></pre>
         </section>
