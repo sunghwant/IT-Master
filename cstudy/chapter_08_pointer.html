@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>08. 포인터 입문 - C언어 마스터 가이드</title>
+    <title>08. 포인터 (Pointer) - C언어 마스터 가이드</title>
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* 완벽한 프레임을 위한 전체 CSS */
-        :root { --primary: #2563eb; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #eff6ff; --tip-border: #60a5fa; --border-color: #e2e8f0; }
+        :root { --primary: #2563eb; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #eff6ff; --tip-border: #60a5fa; --border-color: #e2e8f0; --accent-red: #ef4444; --accent-purple: #8b5cf6; }
         body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
         
-        /* 왼쪽 사이드바 메뉴 */
         .sidebar { width: 280px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
         .sidebar h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
         .nav-list { list-style: none; padding: 0; margin: 0; }
@@ -20,27 +18,29 @@
         .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
         .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
         
-        /* 오른쪽 본문 내용 */
         .content { margin-left: 280px; padding: 60px 80px; max-width: 900px; width: 100%; box-sizing: border-box; }
         .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
         .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
         .content p { font-size: 1.1rem; margin-bottom: 20px; }
         
-        /* 코드 블록 & 박스 & 이미지 */
         pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .kw { color: #f9a8d4; }
+        .type { color: #818cf8; }
+        .func { color: #a7f3d0; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
         .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout.danger { background-color: #fef2f2; border-left-color: var(--accent-red); }
+        .callout.concept { background-color: #f5f3ff; border-left-color: var(--accent-purple); }
         .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .callout.danger h4 { color: var(--accent-red); }
+        .callout.concept h4 { color: var(--accent-purple); }
+
         .img-container { text-align: center; margin: 40px 0; }
-        .img-container img {
-            width: auto;           /* 이미지 고유의 비율 유지 */
-            max-width: 60%;        /* 본문 너비의 60%만 차지 (이 수치를 50%~70% 사이로 조절해 보세요) */
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자도 살짝 연하게 변경 */
-            border: 1px solid var(--border-color);
-            display: block;        /* 중앙 정렬을 위해 필요 */
-            margin: 0 auto;        /* 좌우 여백을 자동으로 주어 중앙 정렬 */
-        }
+        .img-container img { width: auto; max-width: 60%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color); display: block; margin: 0 auto; }
         .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
     </style>
 </head>
@@ -59,35 +59,105 @@
         </ul>
     </aside>
     <main class="content">
-        <h1>08. 포인터 (Pointer): 메모리 주소와 보물지도</h1>
+        <h1>08. 포인터 (Pointer): 메모리의 지배자</h1>
+        <div class="subtitle">C언어의 꽃이자 끝판왕. 데이터의 '주소'를 직접 조작하는 마법을 배웁니다.</div>
+
         <section>
-            <h2>1. 포인터란 무엇인가요?</h2>
-            <p>포인터는 데이터 자체가 아니라, 데이터가 저장된 <strong>'메모리 주소'</strong>를 가리키는 변수입니다. 마치 보물이 들어있는 상자가 아니라, <strong>그 상자가 어디 있는지 알려주는 보물지도</strong>와 같습니다.</p>
+            <h2>1. 포인터의 기초: 보물과 보물지도</h2>
+            <p>지금까지 변수는 데이터를 담는 '상자'라고 배웠습니다. 포인터는 그 데이터 자체가 아니라, <strong>상자가 메모리 어디에 있는지 '주소'를 기억하는 특별한 변수</strong>입니다. 마치 보물상자의 위치를 그려놓은 <strong>보물지도</strong>와 같습니다.</p>
+            
             <div class="img-container">
                 <img src="./images/pointer_address_diagram.png" alt="포인터 주소 개념도">
-                <div class="img-caption">▲ 포인터: "데이터가 어디 있지?" 주소를 찾아가는 나침반</div>
+                <div class="img-caption">▲ 포인터: "보물이 어디 있지?" 메모리 주소를 찾아가는 나침반</div>
             </div>
-        </section>
-        <section>
-            <h2>2. 🗺️ 창의적 예제: 보물찾기 (주소 연산)</h2>
-<pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    int gold = 1000;     // 실제 금 상자
-    int *map = &gold;    // 금 상자의 위치를 기록한 지도 (포인터)
+            <div class="callout concept">
+                <h4>💡 포인터의 핵심 기호 2가지</h4>
+                <p><strong><code>&</code> (주소 연산자):</strong> "이 상자의 주소가 어디야?" (위치 알아내기)<br>
+                <strong><code>*</code> (참조 연산자):</strong> "이 주소로 찾아가서 내용물을 꺼내와!" (보물 꺼내기)</p>
+            </div>
 
-    printf("상자의 실제 내용물: %d골드\n", gold);
-    printf("상자의 위치(주소값): %p\n", map);
-    printf("지도를 보고 찾아간 내용물: %d골드\n", *map);
+            <h3>🗺️ 기초 예제: 보물찾기</h3>
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
 
-    return 0;
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> gold = <span class="type">1000</span>;     <span class="cmt">// 실제 금이 들어있는 상자</span>
+    <span class="type">int</span> *map = &gold;    <span class="cmt">// 금 상자의 주소(&)를 지도(포인터)에 저장</span>
+
+    <span class="func">printf</span>(<span class="str">"상자의 실제 내용물: %d골드\n"</span>, gold);
+    <span class="func">printf</span>(<span class="str">"상자의 메모리 주소: %p\n"</span>, map); <span class="cmt">// %p는 주소 출력용 서식</span>
+    <span class="func">printf</span>(<span class="str">"지도를 보고 찾아간 내용물: %d골드\n"</span>, *map); <span class="cmt">// * 기호로 내용물 접근</span>
+
+    <span class="kw">return</span> <span class="type">0</span>;
 }</code></pre>
-            <div class="callout">
-                <h4>💡 핵심 기호 정리</h4>
-                <p><strong>& (주소 연산자):</strong> 변수의 주소를 알아낼 때 씁니다. (상자의 위치 찾기)</p>
-                <p><strong>* (참조 연산자):</strong> 주소로 가서 실제 값을 가져올 때 씁니다. (지도를 보고 보물 꺼내기)</p>
+        </section>
+
+        <section>
+            <h2>2. 왜 포인터를 쓰나요? (Call by Reference)</h2>
+            <p>가장 많이 묻는 질문입니다. "그냥 변수 쓰면 되지, 왜 굳이 주소를 넘기나요?"</p>
+            <p>함수에게 변수를 그냥 넘겨주면 <strong>'복사본'</strong>만 줍니다. 함수 안에서 복사본을 아무리 지지고 볶아도 원본은 바뀌지 않죠. 하지만 <strong>'주소'를 넘겨주면 함수가 원본을 직접 찾아와서 수정</strong>할 수 있습니다!</p>
+
+            <h3>⚔️ 심화 예제 1: 두 변수의 값 바꾸기 (Swap 함수)</h3>
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="cmt">// 포인터(주소)를 매개변수로 받는 함수</span>
+<span class="type">void</span> <span class="func">swap</span>(<span class="type">int</span> *a, <span class="type">int</span> *b) {
+    <span class="type">int</span> temp = *a;  <span class="cmt">// a주소의 값을 잠시 보관</span>
+    *a = *b;        <span class="cmt">// b주소의 값을 a주소에 덮어쓰기</span>
+    *b = temp;      <span class="cmt">// 보관했던 값을 b주소에 넣기</span>
+}
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> hp = <span class="type">100</span>;
+    <span class="type">int</span> mp = <span class="type">50</span>;
+
+    <span class="func">printf</span>(<span class="str">"마법 사용 전 - HP: %d, MP: %d\n"</span>, hp, mp);
+    
+    <span class="cmt">// 변수의 '주소(&)'를 넘겨주어 원본을 바꿀 수 있게 허락합니다!</span>
+    <span class="func">swap</span>(&hp, &mp); 
+    
+    <span class="func">printf</span>(<span class="str">"마법 사용 후 - HP: %d, MP: %d\n"</span>, hp, mp); <span class="cmt">// 값이 서로 바뀜!</span>
+    
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>3. 충격적인 진실: 배열의 진짜 정체</h2>
+            <p>07장에서 배운 배열, 사실 그 <strong>배열의 이름 자체가 '포인터'</strong>였습니다! 배열의 이름은 항상 '첫 번째 상자(0번 칸)의 주소'를 가리키고 있습니다.</p>
+            
+            <div class="img-container">
+                
+                <div class="img-caption">▲ 배열의 이름은 0번 인덱스의 메모리 주소를 담고 있는 포인터입니다.</div>
+            </div>
+
+            <h3>📊 심화 예제 2: 포인터로 배열 다루기</h3>
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> arr[<span class="type">3</span>] = {<span class="type">10</span>, <span class="type">20</span>, <span class="type">30</span>};
+    <span class="type">int</span> *ptr = arr; <span class="cmt">// 배열 이름(arr) 자체가 주소이므로 & 기호가 필요 없음!</span>
+
+    <span class="cmt">// 아래 3줄은 완벽하게 똑같은 결과를 출력합니다.</span>
+    <span class="func">printf</span>(<span class="str">"배열 첫 번째 값 (배열 방식): %d\n"</span>, arr[<span class="type">0</span>]);
+    <span class="func">printf</span>(<span class="str">"배열 첫 번째 값 (포인터 방식): %d\n"</span>, *ptr);
+    <span class="func">printf</span>(<span class="str">"배열 첫 번째 값 (이름 직접 참조): %d\n"</span>, *arr);
+
+    <span class="cmt">// 포인터의 덧셈: "다음 칸으로 이동해!"</span>
+    <span class="func">printf</span>(<span class="str">"배열 두 번째 값: %d\n"</span>, *(ptr + <span class="type">1</span>)); <span class="cmt">// arr[1]과 동일</span>
+    <span class="func">printf</span>(<span class="str">"배열 세 번째 값: %d\n"</span>, *(ptr + <span class="type">2</span>)); <span class="cmt">// arr[2]과 동일</span>
+
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+
+        <section>
+            <div class="callout danger">
+                <h4>💀 치명적인 함정: 허공을 가리키는 포인터</h4>
+                <p>포인터가 아무것도 가리키지 않는 상태(쓰레기 주소)에서 <code>*ptr = 100;</code> 처럼 값을 넣으려고 하면 큰일 납니다! 이는 남의 집(메모리) 문을 부수고 들어가는 것과 같아서 컴퓨터가 즉시 프로그램을 강제 종료(Segmentation Fault)시킵니다. 포인터를 당장 쓰지 않을 때는 <code>int *ptr = NULL;</code> 이라고 초기화해 두는 습관을 들이세요.</p>
             </div>
         </section>
+
     </main>
 </body>
 </html>
