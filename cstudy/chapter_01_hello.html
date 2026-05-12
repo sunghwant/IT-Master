@@ -111,7 +111,16 @@
 
         /* 이미지 */
         .img-container { text-align: center; margin: 40px 0; }
-        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .img-container img { 
+            width: 100%;   /* 이 부분을 추가 */
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+            border: 1px solid var(--border-color); 
+        }
+
+
         .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
 
         /* 스텝 순서 */

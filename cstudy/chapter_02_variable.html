@@ -34,7 +34,14 @@
         pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; font-family: 'Fira Code', monospace; margin: 20px 0; overflow-x: auto; }
         .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
         .img-container { text-align: center; margin: 40px 0; }
-        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .img-container img { 
+            width: 100%;   /* 이 부분을 추가 */
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+            border: 1px solid var(--border-color); 
+        }
         .img-caption { margin-top: 10px; font-size: 0.95rem; color: #64748b; font-weight: 500; }
     </style>
 </head>
