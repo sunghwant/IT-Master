@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 05. 거짓말 탐지기 - 아두이노 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f59e0b; --sidebar-bg: #f8fafc; --text-main: #334155; --text-light: #64748b; --code-bg: #1e293b; --tip-bg: #fffbeb; --tip-border: #f59e0b; --border-color: #e2e8f0; --accent-red: #ef4444; --accent-green: #10b981; --accent-indigo: #6366f1; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; color: var(--text-main); display: flex; line-height: 1.6; }
+        
+        /* 사이드바 */
+        .sidebar { width: 300px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); position: fixed; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.1rem; color: #0f172a; margin-top: 20px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 8px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; font-size: 0.95rem; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #fef3c7; color: var(--primary); font-weight: bold; }
+        
+        /* 본문 영역 */
+        .content { margin-left: 300px; padding: 60px 80px; max-width: 1000px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+        
+        /* 코드 블록 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .kw { color: #f9a8d4; }
+        .func { color: #a7f3d0; }
+        .num { color: #fef08a; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* 콜아웃 박스 */
+        .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout.info { background-color: #eef2ff; border-left-color: var(--accent-indigo); }
+        .callout h4 { margin: 0 0 10px 0; color: #b45309; font-size: 1.2rem; }
+        .callout.info h4 { color: var(--accent-indigo); }
+
+        /* 이미지 컨테이너 */
+        .img-container { text-align: center; margin: 40px 0; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .img-caption { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); font-weight: 500; }
+        
+        .parts-list { display: flex; flex-wrap: wrap; gap: 15px; margin: 20px 0; }
+        .part-item { background: #f1f5f9; padding: 10px 20px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; color: #475569; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>🤖 아두이노 기초</h2>
+        <ul class="nav-list">
+            <li><a href="arduino_01_intro.html">이론 과정 전체보기</a></li>
+        </ul>
+
+        <h2>🏆 미니 프로젝트</h2>
+        <ul class="nav-list">
+            <li><a href="project_01_traffic_light.html">01. 3색 신호등 시스템</a></li>
+            <li><a href="project_02_piano.html">02. 미니 피아노</a></li>
+            <li><a href="project_03_mood_light.html">03. 스마트 무드등</a></li>
+            <li><a href="project_04_alarm.html">04. 레이저 경보기</a></li>
+            <li><a href="project_05_lie_detector.html" class="active">05. 거짓말 탐지기</a></li>
+            <li><a href="project_06_smart_trash.html">06. 스마트 자동 휴지통</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>프로젝트 05: 🤥 찌릿찌릿 핑거 거짓말 탐지기</h1>
+        <div class="subtitle">우리 몸의 전기 신호 변화를 포착하여 진실 혹은 거짓을 판별하는 흥미로운 장치를 만들어 봅시다.</div>
+
+        <section>
+            <h2>1. 프로젝트 원리: 피부 전기 활동 (GSR)</h2>
+            <p>사람은 긴장하거나 거짓말을 할 때, 뇌의 자율신경계가 반응하여 피부에 아주 미세한 **땀**이 납니다. 땀은 전기가 잘 통하는 성질이 있어, 땀이 나면 피부의 <strong>전기 저항이 급격히 낮아집니다.</strong></p>
+            <p>아두이노의 아날로그 핀으로 두 손가락 사이의 전압 변화를 측정하면, 그 사람이 지금 긴장하고 있는지(거짓말을 하는지) 추측할 수 있습니다.</p>
+
+            <h3>📦 준비물</h3>
+            <div class="parts-list">
+                <span class="part-item">아두이노 우노 x 1</span>
+                <span class="part-item">10kΩ 저항 x 1</span>
+                <span class="part-item">LED (빨강, 초록) 각 1개</span>
+                <span class="part-item">피에조 부저 x 1</span>
+                <span class="part-item">알루미늄 호일 (전극용)</span>
+                <span class="part-item">점퍼 와이어 & 브레드보드</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. 상세 회로 결선도 (Wiring Diagram)</h2>
+            <p>두 손가락을 전극으로 사용합니다. 한쪽은 <strong>5V</strong>에 연결하고, 다른 쪽은 <strong>A0 핀</strong>과 <strong>10kΩ 저항</strong>(GND 연결) 사이에 연결하여 전압 분배 회로를 구성합니다.</p>
+
+            <div class="img-container">
+                <svg width="100%" max-width="700" height="400" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="250" width="600" height="120" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+                    
+                    <rect x="80" y="200" width="60" height="40" fill="#94a3b8" rx="5"/>
+                    <rect x="160" y="200" width="60" height="40" fill="#94a3b8" rx="5"/>
+                    <text x="110" y="190" fill="#475569" font-size="12" font-weight="bold" text-anchor="middle">전극 A</text>
+                    <text x="190" y="190" fill="#475569" font-size="12" font-weight="bold" text-anchor="middle">전극 B</text>
+
+                    <rect x="350" y="20" width="180" height="120" rx="5" fill="#1e293b"/>
+                    <text x="440" y="50" fill="white" font-weight="bold" text-anchor="middle">Arduino Uno</text>
+                    <text x="440" y="100" fill="#0d9488" font-size="12" text-anchor="middle">A0 | 5V | D8 | D9 | D10</text>
+
+                    <path d="M 110 200 L 110 50 L 350 50" fill="none" stroke="#ef4444" stroke-width="3"/>
+                    
+                    <path d="M 190 200 L 190 100 L 350 100" fill="none" stroke="#0d9488" stroke-width="3"/>
+                    <line x1="190" y1="200" x2="190" y2="310" stroke="#0d9488" stroke-width="3"/>
+                    <rect x="180" y="310" width="20" height="10" fill="#6366f1"/> <line x1="190" y1="320" x2="190" y2="350" stroke="#334155" stroke-width="3"/> <circle cx="550" cy="310" r="12" fill="#10b981"/> <circle cx="600" cy="310" r="12" fill="#ef4444"/> <text x="575" y="350" fill="#334155" font-size="11" font-weight="bold" text-anchor="middle">결과 표시 LED</text>
+
+                    <text x="350" y="390" text-anchor="middle" fill="#64748b" font-size="13">알루미늄 호일을 손가락에 감아 전선을 연결하면 접촉이 더 잘 됩니다.</text>
+                </svg>
+                <div class="img-caption">▲ 거짓말 탐지기 회로: 피부를 하나의 '가변 저항'으로 사용하는 원리입니다.</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. 코드 작성하기</h2>
+            <p>사람마다 피부 저항이 다르므로, 처음 5~10초 동안은 가만히 있는 상태의 '기준값'을 측정하고, 그보다 값이 튀어 오를 때 경보를 울리도록 설계합니다.</p>
+
+<pre><code><span class="type">int</span> sensorPin = A0;
+<span class="type">int</span> redLed = <span class="num">9</span>;
+<span class="type">int</span> greenLed = <span class="num">10</span>;
+<span class="type">int</span> buzzer = <span class="num">8</span>;
+
+<span class="type">int</span> baseline = <span class="num">0</span>; <span class="cmt">// 평상시 기준값</span>
+
+<span class="kw">void</span> <span class="func">setup</span>() {
+    <span class="func">Serial.begin</span>(<span class="num">9600</span>);
+    <span class="func">pinMode</span>(redLed, OUTPUT);
+    <span class="func">pinMode</span>(greenLed, OUTPUT);
+    <span class="func">pinMode</span>(buzzer, OUTPUT);
+
+    <span class="func">Serial.println</span>(<span class="str">"보정을 시작합니다. 손가락을 대고 5초간 가만히 계세요..."</span>);
+    
+    <span class="cmt">// 초기 보정: 50번 측정하여 평균값 내기</span>
+    <span class="type">long</span> sum = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="type">int</span> i = <span class="num">0</span>; i &lt; <span class="num">50</span>; i++) {
+        sum += <span class="func">analogRead</span>(sensorPin);
+        <span class="func">delay</span>(<span class="num">100</span>);
+    }
+    baseline = sum / <span class="num">50</span>;
+    <span class="func">Serial</span>.<span class="func">print</span>(<span class="str">"보정 완료! 기준값: "</span>); <span class="func">Serial.println</span>(baseline);
+}
+
+<span class="kw">void</span> <span class="func">loop</span>() {
+    <span class="type">int</span> currentValue = <span class="func">analogRead</span>(sensorPin);
+    
+    <span class="func">Serial.print</span>(<span class="str">"현재 수치: "</span>); <span class="func">Serial.println</span>(currentValue);
+
+    <span class="cmt">// 기준값보다 수치가 일정 이상(예: 20) 올라가면 거짓말로 간주</span>
+    <span class="kw">if</span> (currentValue &gt; baseline + <span class="num">20</span>) {
+        <span class="func">digitalWrite</span>(redLed, HIGH);
+        <span class="func">digitalWrite</span>(greenLed, LOW);
+        <span class="func">tone</span>(buzzer, <span class="num">800</span>); <span class="cmt">// 삐~ 소리</span>
+    } <span class="kw">else</span> {
+        <span class="func">digitalWrite</span>(redLed, LOW);
+        <span class="func">digitalWrite</span>(greenLed, HIGH);
+        <span class="func">noTone</span>(buzzer);
+    }
+    
+    <span class="func">delay</span>(<span class="num">200</span>);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>4. 프로젝트 핵심 분석</h2>
+            <div class="callout info">
+                <h4>💡 왜 기준값(Baseline)이 필요한가요?</h4>
+                <p>사람의 피부는 건조한 정도에 따라 평상시 저항값이 다릅니다. 어떤 사람은 300이 나올 수도 있고, 어떤 사람은 500이 나올 수도 있죠. 그래서 <strong>절대적인 수치</strong>가 아니라, <strong>'자신의 평소 상태보다 얼마나 변했는가'</strong>를 측정하는 것이 훨씬 정확합니다.</p>
+            </div>
+            
+            <ul>
+                <li><strong>보정 로직:</strong> <code>setup()</code> 함수 내의 <code>for</code>문을 통해 시작 시 사용자의 평균 피부 전압을 자동으로 계산합니다.</li>
+                <li><strong>알루미늄 호일 사용 이유:</strong> 전선 끝부분만 손가락에 대면 접촉 면적이 좁아 값이 불안정합니다. 호일을 감으면 접촉 면적이 넓어져 훨씬 정밀한 측정이 가능합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. 🎯 심화 챌린지: 멀티 단계 판별기</h2>
+            <p>단순히 '진실/거짓' 두 단계가 아니라, <strong>LED를 5개 정도 사용</strong>하여 긴장도가 높아질수록 LED가 한 칸씩 더 켜지게 만들어 보세요. 영화에 나오는 정교한 거짓말 탐지기 그래프처럼 시각화할 수 있습니다!</p>
+        </section>
+    </main>
+</body>
+</html>
