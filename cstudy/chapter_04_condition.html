@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04. 조건문 (if, switch) - C언어 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --sidebar-bg: #f8fafc;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --code-bg: #1e293b;
+            --tip-bg: #eff6ff;
+            --tip-border: #60a5fa;
+            --border-color: #e2e8f0;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            line-height: 1.6;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            overflow-y: auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 10px; }
+        .nav-list a {
+            text-decoration: none;
+            color: var(--text-light);
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+
+        /* 본문 */
+        .content {
+            margin-left: 280px;
+            padding: 60px 80px;
+            max-width: 900px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+
+        /* 콜아웃 박스 */
+        .callout {
+            background-color: var(--tip-bg);
+            border-left: 5px solid var(--tip-border);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+        }
+        .callout.warning {
+            background-color: #fef2f2;
+            border-left-color: var(--accent-red);
+        }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .callout.warning h4 { color: var(--accent-red); }
+
+        /* 코드 블록 */
+        pre {
+            background-color: var(--code-bg);
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.05rem;
+            margin: 20px 0;
+        }
+        .kw { color: #f9a8d4; }
+        .type { color: #818cf8; }
+        .func { color: #a7f3d0; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* HTML/CSS 다이어그램 스타일 */
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px 0;
+            gap: 15px;
+        }
+        .flow-node {
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 150px;
+        }
+        .decision {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            padding: 30px 20px;
+            color: #b45309;
+        }
+        .process {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            color: #0369a1;
+        }
+        .arrow { font-size: 1.5rem; color: #94a3b8; }
+        .row { display: flex; gap: 50px; align-items: flex-start; }
+
+        /* 이미지 보완용 클래스 */
+        .img-container { text-align: center; margin: 40px 0; }
+        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>📚 C언어 목차</h2>
+        <ul class="nav-list">
+            <li><a href="chapter_01_hello.html">01. Hello World</a></li>
+            <li><a href="chapter_02_variable.html">02. 변수와 자료형</a></li>
+            <li><a href="chapter_03_operator.html">03. 연산자의 세계</a></li>
+            <li><a href="chapter_04_condition.html" class="active">04. 조건문 (if, switch)</a></li>
+            <li><a href="#">05. 반복문 (for, while)</a></li>
+            <li><a href="chapter_function.html">06. 함수 (Function)</a></li>
+            <li><a href="#">07. 배열 (Array)</a></li>
+            <li><a href="#">08. 포인터 (Pointer)</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>04. 조건문: 프로그램의 갈림길</h1>
+        <div class="subtitle">"만약 ~라면?" 상황에 따라 다른 행동을 하도록 프로그램에 지능을 심어줍니다.</div>
+
+        <section>
+            <h2>1. if 문: 진실 혹은 거짓</h2>
+            <p>조건문 중에서 가장 기본이 되는 것이 <strong>if 문</strong>입니다. 괄호 안의 조건이 <strong>참(1)</strong>일 때만 중괄호 안의 코드를 실행합니다.</p>
+
+            <div class="flow-diagram">
+                <div class="flow-node process">시작</div>
+                <div class="arrow">↓</div>
+                <div class="flow-node decision">조건이 참인가?</div>
+                <div class="row">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="color: #10b981; font-weight: bold;">YES</div>
+                        <div class="arrow">↓</div>
+                        <div class="flow-node process" style="border-color: #10b981;">코드 실행</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="color: #ef4444; font-weight: bold;">NO</div>
+                        <div class="arrow">↓</div>
+                        <div class="flow-node process" style="border-color: #ef4444;">그냥 통과</div>
+                    </div>
+                </div>
+            </div>
+
+<pre><code><span class="type">int</span> score = <span class="type">95</span>;
+
+<span class="kw">if</span> (score &gt;= <span class="type">90</span>) {
+    <span class="func">printf</span>(<span class="str">"합격입니다! 우와!\n"</span>);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>2. if-else 와 else if: 더 복잡한 선택</h2>
+            <p>조건이 참일 때뿐만 아니라, **거짓일 때** 실행할 코드도 지정할 수 있습니다. 또한 여러 가지 조건을 줄줄이 검사할 수도 있죠.</p>
+
+            <div class="callout">
+                <h4>💡 갈림길 비유</h4>
+                <p><strong>if:</strong> 정면에 길이 있으면 가라.<br>
+                <strong>else if:</strong> (정면에 길이 없으면) 오른쪽 길은 있는가? 있다면 가라.<br>
+                <strong>else:</strong> (모든 길이 없으면) 그냥 멈춰라.</p>
+            </div>
+
+<pre><code><span class="type">int</span> age = <span class="type">15</span>;
+
+<span class="kw">if</span> (age &gt;= <span class="type">20</span>) {
+    <span class="func">printf</span>(<span class="str">"성인입니다.\n"</span>);
+} <span class="kw">else if</span> (age &gt;= <span class="type">14</span>) {
+    <span class="func">printf</span>(<span class="str">"청소년입니다.\n"</span>);
+} <span class="kw">else</span> {
+    <span class="func">printf</span>(<span class="str">"어린이입니다.\n"</span>);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>3. 🎮 창의적 응용 예제 1: 던전 입구 판독기</h2>
+            <p>사용자의 레벨을 입력받아, 특정 레벨 이상만 들어갈 수 있는 던전 시스템을 만들어 봅시다. 앞서 배운 <code>system()</code> 함수와 조합하면 더 재미있습니다!</p>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+<span class="cmt">#include &lt;stdlib.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> level;
+    <span class="func">printf</span>(<span class="str">"용사여, 레벨을 입력하라: "</span>);
+    <span class="func">scanf</span>(<span class="str">"%d"</span>, &level);
+
+    <span class="kw">if</span> (level &gt;= <span class="type">50</span>) {
+        <span class="func">printf</span>(<span class="str">"🔥 [전설의 용사 던전] 입장이 허용되었습니다!\n"</span>);
+        <span class="func">system</span>(<span class="str">"color 0C"</span>); <span class="cmt">// 화면을 붉은색(위험)으로 변경</span>
+    } <span class="kw">else if</span> (level &gt;= <span class="type">20</span>) {
+        <span class="func">printf</span>(<span class="str">"⚔️ [중급자 던전] 입장이 허용되었습니다.\n"</span>);
+        <span class="func">system</span>(<span class="str">"color 0B"</span>); <span class="cmt">// 화면을 청록색으로 변경</span>
+    } <span class="kw">else</span> {
+        <span class="func">printf</span>(<span class="str">"💀 레벨이 너무 낮습니다. 수련하고 오세요!\n"</span>);
+    }
+
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>4. switch 문: 명확한 메뉴 선택</h2>
+            <p>검사할 조건이 특정 '값'으로 딱딱 떨어질 때(정수, 문자 등)는 <code>if</code> 보다 <code>switch</code>가 훨씬 깔끔합니다. 자판기 버튼을 누르는 것과 같습니다.</p>
+
+            <div class="img-container">
+                <img src="./images/vending_machine_switch.png" alt="자판기 버튼과 switch문의 매칭 개념도">
+                <div class="img-caption">▲ switch 문: 입력된 번호(case)에 맞는 버튼을 즉시 누르는 것</div>
+            </div>
+
+<pre><code><span class="type">int</span> button = <span class="type">2</span>;
+
+<span class="kw">switch</span> (button) {
+    <span class="kw">case</span> <span class="type">1</span>:
+        <span class="func">printf</span>(<span class="str">"콜라가 나옵니다.\n"</span>);
+        <span class="kw">break</span>; <span class="cmt">// break가 없으면 아래로 줄줄이 실행되니 주의!</span>
+    <span class="kw">case</span> <span class="type">2</span>:
+        <span class="func">printf</span>(<span class="str">"사이다가 나옵니다.\n"</span>);
+        <span class="kw">break</span>;
+    <span class="kw">default</span>: <span class="cmt">// 어떤 case에도 해당하지 않을 때</span>
+        <span class="func">printf</span>(<span class="str">"잘못된 버튼입니다.\n"</span>);
+}</code></pre>
+
+            <div class="callout warning">
+                <h4>⚠️ break의 중요성!</h4>
+                <p><code>break</code>를 빠뜨리면 해당 case가 끝난 후에도 멈추지 않고 아래 case들까지 전부 실행해버립니다. 이를 'Fall-through'라고 부릅니다. 특별한 의도가 없다면 꼭 적어주세요!</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>5. 🍱 창의적 응용 예제 2: 오늘의 점심 메뉴 추천기</h2>
+            <p>1~3 사이의 숫자를 입력하면 랜덤하게 메뉴를 골라주는 (것처럼 보이는) 프로그램을 만들어 봅시다.</p>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> pick;
+    <span class="func">printf</span>(<span class="str">"--- [오늘 뭐 먹지?] ---\n"</span>);
+    <span class="func">printf</span>(<span class="str">"1~3 중 행운의 숫자를 고르세요: "</span>);
+    <span class="func">scanf</span>(<span class="str">"%d"</span>, &pick);
+
+    <span class="kw">switch</span> (pick) {
+        <span class="kw">case</span> <span class="type">1</span>:
+            <span class="func">printf</span>(<span class="str">"🍱 오늘은 따뜻한 국밥 어떠세요?\n"</span>);
+            <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="type">2</span>:
+            <span class="func">printf</span>(<span class="str">"🍕 치즈가 듬뿍 들어간 피자 추천!\n"</span>);
+            <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="type">3</span>:
+            <span class="func">printf</span>(<span class="str">"🍣 신선한 초밥이 당신을 기다립니다.\n"</span>);
+            <span class="kw">break</span>;
+        <span class="kw">default</span>:
+            <span class="func">printf</span>(<span class="str">"🤔 배가 안 고프신가 보군요?\n"</span>);
+    }
+
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>6. 🧮 보너스: 미니 사칙연산 계산기</h2>
+            <p>입력받은 기호(+, -, *, /)에 따라 다른 계산을 수행하는 프로그램을 <code>switch</code>와 <code>char</code> 자료형으로 만들어 봅시다.</p>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">char</span> op;
+    <span class="type">int</span> n1, n2;
+
+    <span class="func">printf</span>(<span class="str">"계산식 입력 (예: 10 + 5): "</span>);
+    <span class="func">scanf</span>(<span class="str">"%d %c %d"</span>, &n1, &op, &n2);
+
+    <span class="kw">switch</span> (op) {
+        <span class="kw">case</span> <span class="str">'+'</span>: <span class="func">printf</span>(<span class="str">"결과: %d\n"</span>, n1 + n2); <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="str">'-'</span>: <span class="func">printf</span>(<span class="str">"결과: %d\n"</span>, n1 - n2); <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="str">'*'</span>: <span class="func">printf</span>(<span class="str">"결과: %d\n"</span>, n1 * n2); <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="str">'/'</span>: 
+            <span class="kw">if</span> (n2 != <span class="type">0</span>) <span class="func">printf</span>(<span class="str">"결과: %d\n"</span>, n1 / n2); 
+            <span class="kw">else</span> <span class="func">printf</span>(<span class="str">"0으로 나눌 수 없습니다!\n"</span>);
+            <span class="kw">break</span>;
+        <span class="kw">default</span>: <span class="func">printf</span>(<span class="str">"잘못된 연산자입니다.\n"</span>);
+    }
+
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05. 반복문 (for, while) - C언어 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --sidebar-bg: #f8fafc;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --code-bg: #1e293b;
+            --tip-bg: #eff6ff;
+            --tip-border: #60a5fa;
+            --border-color: #e2e8f0;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            line-height: 1.6;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            overflow-y: auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 10px; }
+        .nav-list a { text-decoration: none; color: var(--text-light); display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+
+        /* 본문 */
+        .content { margin-left: 280px; padding: 60px 80px; max-width: 900px; width: 100%; box-sizing: border-box; }
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+
+        /* 콜아웃 박스 */
+        .callout { background-color: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 20px; border-radius: 0 8px 8px 0; margin: 30px 0; }
+        .callout.danger { background-color: #fef2f2; border-left-color: var(--accent-red); }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .callout.danger h4 { color: var(--accent-red); }
+
+        /* 코드 블록 */
+        pre { background-color: var(--code-bg); color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 1.05rem; margin: 20px 0; }
+        .kw { color: #f9a8d4; }
+        .type { color: #818cf8; }
+        .func { color: #a7f3d0; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* HTML/CSS 다이어그램 (for문 구조) */
+        .loop-diagram { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 40px 0; background: #f8fafc; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .l-box { padding: 15px; border-radius: 8px; font-weight: bold; text-align: center; color: white; }
+        .l-init { background: #8b5cf6; }
+        .l-cond { background: #f59e0b; }
+        .l-body { background: #10b981; }
+        .l-inc { background: #3b82f6; }
+        .l-arrow { font-size: 1.5rem; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>📚 C언어 목차</h2>
+        <ul class="nav-list">
+            <li><a href="chapter_01_hello.html">01. Hello World</a></li>
+            <li><a href="chapter_02_variable.html">02. 변수와 자료형</a></li>
+            <li><a href="chapter_03_operator.html">03. 연산자의 세계</a></li>
+            <li><a href="chapter_04_condition.html">04. 조건문 (if, switch)</a></li>
+            <li><a href="chapter_05_loop.html" class="active">05. 반복문 (for, while)</a></li>
+            <li><a href="chapter_function.html">06. 함수 (Function)</a></li>
+            <li><a href="#">07. 배열 (Array)</a></li>
+            <li><a href="#">08. 포인터 (Pointer)</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>05. 반복문: 지치지 않는 톱니바퀴</h1>
+        <div class="subtitle">컴퓨터의 진정한 힘! 수만 번의 반복 작업을 단 몇 줄의 코드로 처리합니다.</div>
+
+        <section>
+            <h2>1. for 반복문 (횟수가 명확할 때)</h2>
+            <p><code>for</code>문은 <strong>"몇 번 반복할지"</strong> 횟수가 정해져 있을 때 가장 쓰기 좋은 반복문입니다. 한 괄호 안에 시작, 끝, 증감을 모두 적어 가독성이 뛰어납니다.</p>
+
+            <div class="loop-diagram">
+                <div class="l-box l-init">1. 초기식<br><span style="font-size:0.8em">int i=0</span></div>
+                <div class="l-arrow">➡</div>
+                <div class="l-box l-cond">2. 조건식<br><span style="font-size:0.8em">i < 3</span></div>
+                <div class="l-arrow">➡</div>
+                <div class="l-box l-body">3. 실행할 코드<br><span style="font-size:0.8em">printf(...)</span></div>
+                <div class="l-arrow">➡</div>
+                <div class="l-box l-inc">4. 증감식<br><span style="font-size:0.8em">i++</span></div>
+            </div>
+            <p style="text-align: center; color: #64748b; font-size: 0.9em; margin-top: -20px; margin-bottom: 30px;">▲ 한 바퀴를 돌면 4번(증감)에서 2번(조건)으로 다시 돌아가 검사합니다.</p>
+
+            <h3>💻 단일 for문 예제: 로켓 발사 카운트다운</h3>
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+<span class="cmt">#include &lt;windows.h&gt; // Sleep() 함수를 쓰기 위해 추가</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="func">printf</span>(<span class="str">"🚀 로켓 발사를 준비합니다!\n"</span>);
+    
+    <span class="cmt">// i는 5부터 시작해서, 0보다 클 때까지, 1씩 줄어듭니다.</span>
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="type">5</span>; i &gt; <span class="type">0</span>; i--) {
+        <span class="func">printf</span>(<span class="str">"%d...\n"</span>, i);
+        <span class="func">Sleep</span>(<span class="type">1000</span>); <span class="cmt">// 1000밀리초(1초) 동안 프로그램을 잠재움</span>
+    }
+    
+    <span class="func">printf</span>(<span class="str">"발사!!! 🔥\n"</span>);
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+
+            <h3>💻 중첩 for문 예제: 디지털 시계 만들기</h3>
+            <p>for문 안에 또 for문이 들어가면 어떻게 될까요? 시침이 1시간 움직일 때, 분침이 60번 움직이는 <strong>시계의 원리</strong>와 완벽히 똑같습니다.</p>
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="cmt">// 바깥쪽 for문 (시간)</span>
+    <span class="kw">for</span> (<span class="type">int</span> h = <span class="type">1</span>; h &lt;= <span class="type">3</span>; h++) {
+        <span class="cmt">// 안쪽 for문 (분)</span>
+        <span class="kw">for</span> (<span class="type">int</span> m = <span class="type">0</span>; m &lt;= <span class="type">59</span>; m += <span class="type">15</span>) { <span class="cmt">// 15분 단위로 증가</span>
+            <span class="func">printf</span>(<span class="str">"[%02d:%02d] 똑딱\n"</span>, h, m);
+        }
+        <span class="func">printf</span>(<span class="str">"--- 1시간 경과! ---\n"</span>);
+    }
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>2. while 반복문 (조건이 중요할 때)</h2>
+            <p><code>while</code>문은 횟수보다는 <strong>"이 조건이 참인 동안에는 계속 돌려라!"</strong>라고 명령할 때 씁니다. RPG 게임에서 체력이 0이 될 때까지 계속 싸우는 상황 등에 적합합니다.</p>
+            
+            
+
+            <h3>💻 단일 while문 예제: 광물 캐기 게임</h3>
+<pre><code><span class="type">int</span> stamina = <span class="type">30</span>;
+
+<span class="kw">while</span> (stamina &gt; <span class="type">0</span>) {
+    <span class="func">printf</span>(<span class="str">"⛏️ 광물을 캡니다! (남은 체력: %d)\n"</span>, stamina);
+    stamina -= <span class="type">10</span>; <span class="cmt">// 곡괭이질 한 번에 체력 10 소모</span>
+}
+<span class="func">printf</span>(<span class="str">"💀 체력이 방전되어 쓰러졌습니다.\n"</span>);</code></pre>
+
+            <h3>💻 중첩 while문 예제: 2차원 맵 좌표 탐색</h3>
+<pre><code><span class="type">int</span> y = <span class="type">1</span>;
+<span class="kw">while</span> (y &lt;= <span class="type">3</span>) {      <span class="cmt">// y축 (세로) 3칸</span>
+    <span class="type">int</span> x = <span class="type">1</span>;
+    <span class="kw">while</span> (x &lt;= <span class="type">3</span>) {  <span class="cmt">// x축 (가로) 3칸</span>
+        <span class="func">printf</span>(<span class="str">"(X:%d, Y:%d) 탐색중...  "</span>, x, y);
+        x++;
+    }
+    <span class="func">printf</span>(<span class="str">"\n"</span>); <span class="cmt">// 한 줄 끝나면 줄바꿈</span>
+    y++;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>3. 🚀 난이도 UP! break, continue, if의 결합</h2>
+            <p>반복문을 내 마음대로 통제하려면 브레이크(멈춤)와 액셀(건너뛰기)이 필요합니다.</p>
+            <ul>
+                <li><strong>break:</strong> 반복문을 그 즉시 박살 내고 <strong>탈출</strong>합니다.</li>
+                <li><strong>continue:</strong> 이번 턴만 <strong>건너뛰고</strong>, 다음 반복으로 넘어갑니다.</li>
+            </ul>
+
+            <p>아래 코드는 1부터 10까지 출력하되, <strong>4는 재수 없으니 건너뛰고, 8을 만나면 아예 멈춰버리는</strong> 코드입니다.</p>
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="type">1</span>; i &lt;= <span class="type">10</span>; i++) {
+        
+        <span class="kw">if</span> (i == <span class="type">4</span>) {
+            <span class="func">printf</span>(<span class="str">"  &gt;&gt; %d는 스킵합니다! (continue)\n"</span>, i);
+            <span class="kw">continue</span>; <span class="cmt">// 아래 코드를 무시하고 다음 i(5)로 올라감</span>
+        }
+        
+        <span class="kw">if</span> (i == <span class="type">8</span>) {
+            <span class="func">printf</span>(<span class="str">"  &gt;&gt; %d를 발견! 반복문 탈출! (break)\n"</span>, i);
+            <span class="kw">break</span>; <span class="cmt">// for문 자체를 완전히 파괴하고 나감</span>
+        }
+        
+        <span class="func">printf</span>(<span class="str">"현재 숫자: %d\n"</span>, i);
+    }
+    <span class="func">printf</span>(<span class="str">"반복문 종료.\n"</span>);
+    
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>4. 😈 함정 주의! 중괄호 <code>{}</code>가 없는 반복문</h2>
+            <p>초보자들이 밤을 새우며 버그를 찾게 만드는 가장 악명 높은 함정입니다. <code>for</code>나 <code>while</code> 뒤에 <strong>중괄호 `{}`를 생략하면, 바로 밑에 있는 '단 한 줄'의 코드만 반복문으로 인정</strong>합니다.</p>
+
+            <div class="callout danger">
+                <h4>💀 헷갈리는 예제: 텍스트는 3번 찍힐까요?</h4>
+                <p>들여쓰기가 되어있다고 해서 컴퓨터가 속지 않습니다. 컴퓨터는 오직 문법만 봅니다.</p>
+            </div>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="func">printf</span>(<span class="str">"--- 중괄호 없는 for문 테스트 ---\n"</span>);
+    
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="type">1</span>; i &lt;= <span class="type">3</span>; i++)
+        <span class="func">printf</span>(<span class="str">"빙글빙글 돕니다! (i=%d)\n"</span>, i);
+        <span class="func">printf</span>(<span class="str">"이 줄도 3번 돌까요?\n"</span>); <span class="cmt">// 함정 카드!!</span>
+
+    <span class="func">printf</span>(<span class="str">"------------------------------\n"</span>);
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+
+            <h3>결과 예측해보기</h3>
+            <p>사람의 눈에는 두 줄 모두 들여쓰기가 되어 있어 3번씩 찍힐 것 같지만, 실제 실행 결과는 아래와 같습니다.</p>
+            <div style="background: #000; color: #0f0; padding: 15px; font-family: monospace; border-radius: 8px;">
+                --- 중괄호 없는 for문 테스트 ---<br>
+                빙글빙글 돕니다! (i=1)<br>
+                빙글빙글 돕니다! (i=2)<br>
+                빙글빙글 돕니다! (i=3)<br>
+                <span style="color: #f87171;">이 줄도 3번 돌까요?</span>  <-- 딱 1번만 찍힘!<br>
+                ------------------------------
+            </div>
+            <p><strong>결론:</strong> 초보자 시절에는 코드가 한 줄이든 두 줄이든 <strong>무조건 중괄호 `{}`를 치는 습관</strong>을 들이는 것이 좋습니다!</p>
+        </section>
+
+    </main>
+
+</body>
+</html>
