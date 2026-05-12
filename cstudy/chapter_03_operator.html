@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03. 연산자의 세계 - C언어 마스터 가이드</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --sidebar-bg: #f8fafc;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --code-bg: #1e293b;
+            --tip-bg: #eff6ff;
+            --tip-border: #60a5fa;
+            --border-color: #e2e8f0;
+            --accent-green: #10b981;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            line-height: 1.6;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            overflow-y: auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list li { margin-bottom: 10px; }
+        .nav-list a {
+            text-decoration: none;
+            color: var(--text-light);
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-list a:hover { background-color: #e2e8f0; color: #0f172a; }
+        .nav-list a.active { background-color: #dbeafe; color: var(--primary); font-weight: bold; }
+
+        /* 본문 */
+        .content {
+            margin-left: 280px;
+            padding: 60px 80px;
+            max-width: 900px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .content h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 10px; }
+        .content .subtitle { font-size: 1.2rem; color: var(--text-light); margin-bottom: 50px; }
+        .content h2 { font-size: 1.8rem; color: var(--primary); margin-top: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content h3 { font-size: 1.4rem; color: #0f172a; margin-top: 30px; }
+        .content p { font-size: 1.1rem; margin-bottom: 20px; }
+
+        /* 콜아웃 박스 */
+        .callout {
+            background-color: var(--tip-bg);
+            border-left: 5px solid var(--tip-border);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+        }
+        .callout.success {
+            background-color: #ecfdf5;
+            border-left-color: var(--accent-green);
+        }
+        .callout h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.2rem; }
+        .callout.success h4 { color: var(--accent-green); }
+
+        /* 코드 블록 */
+        pre {
+            background-color: var(--code-bg);
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.05rem;
+            margin: 20px 0;
+        }
+        .kw { color: #f9a8d4; }
+        .type { color: #818cf8; }
+        .func { color: #a7f3d0; }
+        .str { color: #fca5a5; }
+        .cmt { color: #94a3b8; font-style: italic; }
+
+        /* 이미지 */
+        .img-container { text-align: center; margin: 40px 0; }
+        .img-container img { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .img-caption { margin-top: 10px; font-size: 0.95rem; color: var(--text-light); }
+
+        /* 테이블 */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: 8px; overflow: hidden; }
+        th { background-color: var(--primary); color: white; padding: 12px; text-align: center; }
+        td { padding: 12px; border-bottom: 1px solid var(--border-color); text-align: center; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        td.code-font { font-family: 'Fira Code', monospace; font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>📚 C언어 목차</h2>
+        <ul class="nav-list">
+            <li><a href="chapter_01_hello.html">01. Hello World</a></li>
+            <li><a href="chapter_02_variable.html">02. 변수와 자료형</a></li>
+            <li><a href="chapter_03_operator.html" class="active">03. 연산자의 세계</a></li>
+            <li><a href="#">04. 조건문 (if, switch)</a></li>
+            <li><a href="#">05. 반복문 (for, while)</a></li>
+            <li><a href="chapter_function.html">06. 함수 (Function)</a></li>
+            <li><a href="#">07. 배열 (Array)</a></li>
+            <li><a href="#">08. 포인터 (Pointer)</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <h1>03. 연산자의 세계: 데이터 요리하기</h1>
+        <div class="subtitle">변수라는 재료를 준비했으니, 이제 연산자라는 도구로 맛있는 프로그램을 요리할 차례입니다.</div>
+
+        <section>
+            <h2>1. 산술 연산자 (수학 시간의 추억)</h2>
+            <p>우리가 일상에서 쓰는 더하기, 빼기, 곱하기, 나누기와 똑같습니다. 단, 컴퓨터의 세계에서는 <strong>곱하기(*)</strong>와 <strong>나누기(/)</strong> 기호가 조금 다르고, <strong>나머지(%)</strong>라는 아주 특별한 연산자가 추가됩니다.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>연산자</th>
+                        <th>의미</th>
+                        <th>사용 예시</th>
+                        <th>결과</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="code-font">+</td>
+                        <td>더하기</td>
+                        <td>10 + 3</td>
+                        <td>13</td>
+                    </tr>
+                    <tr>
+                        <td class="code-font">-</td>
+                        <td>빼기</td>
+                        <td>10 - 3</td>
+                        <td>7</td>
+                    </tr>
+                    <tr>
+                        <td class="code-font">*</td>
+                        <td>곱하기</td>
+                        <td>10 * 3</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td class="code-font">/</td>
+                        <td>몫 (나누기)</td>
+                        <td>10 / 3</td>
+                        <td>3 (정수끼리 나누면 소수점은 버려집니다!)</td>
+                    </tr>
+                    <tr>
+                        <td class="code-font">%</td>
+                        <td>나머지</td>
+                        <td>10 % 3</td>
+                        <td>1 (10을 3으로 나눈 나머지)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout success">
+                <h4>💡 마법의 연산자 '%' (나머지 연산자)</h4>
+                <p>초보자들은 <code>%</code> 기호를 보면 백분율을 생각하지만, C언어에서는 <strong>나머지</strong>를 구합니다. 이 연산자는 짝수/홀수 판별, 초를 분으로 바꾸기 등 프로그래밍에서 정말 엄청나게 많이 쓰이는 핵심 도구입니다!</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. 대입 연산자와 증감 연산자</h2>
+            <p>수학에서 <code>=</code>는 "같다"는 뜻이지만, 프로그래밍에서는 <strong>"오른쪽의 값을 왼쪽 변수 상자에 넣어라(대입해라)"</strong>라는 뜻입니다.</p>
+            <p>그리고 변수의 값을 1씩 증가시키거나 감소시킬 때 쓰는 아주 편리한 마법 주문이 있습니다.</p>
+
+<pre><code><span class="type">int</span> level = <span class="type">1</span>;
+
+<span class="cmt">// 1. 일반적인 대입 연산</span>
+level = level + <span class="type">1</span>;  <span class="cmt">// 내 레벨에 1을 더해서 다시 내 레벨에 넣어라 (레벨 2)</span>
+
+<span class="cmt">// 2. 복합 대입 연산자 (줄여 쓰기)</span>
+level += <span class="type">1</span>;         <span class="cmt">// 위와 완전히 똑같은 뜻입니다. (레벨 3)</span>
+
+<span class="cmt">// 3. 증감 연산자 (가장 많이 씀!)</span>
+level++;            <span class="cmt">// 그냥 나를 1 증가시켜라! (레벨 4)</span>
+level--;            <span class="cmt">// 나를 1 감소시켜라! (레벨 3)</span></code></pre>
+        </section>
+
+        <section>
+            <h2>3. 🎮 창의적 응용 예제 1: 자판기 거스름돈 계산기</h2>
+            <p>앞서 배운 <strong>나머지 연산자(%)</strong>와 나누기 연산자(/)를 활용하여 거스름돈을 500원짜리와 100원짜리로 정확히 나누어 주는 프로그램을 만들어 봅시다.</p>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> money = <span class="type">1800</span>; <span class="cmt">// 거슬러 주어야 할 돈</span>
+    
+    <span class="func">printf</span>(<span class="str">"거스름돈 총액: %d원\n"</span>, money);
+    
+    <span class="cmt">// 500원짜리 동전 개수 구하기 (몫)</span>
+    <span class="type">int</span> coin500 = money / <span class="type">500</span>;
+    <span class="func">printf</span>(<span class="str">"500원 동전: %d개\n"</span>, coin500);
+    
+    <span class="cmt">// 남은 돈 계산 (500원으로 나누고 남은 나머지 돈)</span>
+    money = money % <span class="type">500</span>; 
+    
+    <span class="cmt">// 100원짜리 동전 개수 구하기</span>
+    <span class="type">int</span> coin100 = money / <span class="type">100</span>;
+    <span class="func">printf</span>(<span class="str">"100원 동전: %d개\n"</span>, coin100);
+    
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+            <div class="img-container">
+                <img src="./images/modulo_coin_calc.png" alt="거스름돈 계산을 몫과 나머지로 표현한 그림">
+                <div class="img-caption">▲ 나누기(/)는 몫을 구하고, 나머지(%)는 남은 잔돈을 구해줍니다.</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>4. 관계 연산자와 논리 연산자 (진실 혹은 거짓)</h2>
+            <p>우리가 다음 챕터에서 배울 '조건문'을 사용하려면, 특정 조건이 <strong>참(1)인지 거짓(0)인지</strong> 판별해야 합니다. 이때 사용하는 것이 관계/논리 연산자입니다.</p>
+
+            <ul>
+                <li><strong>관계 연산자 (비교하기):</strong> <code>&gt;</code>(크다), <code>&lt;</code>(작다), <code>==</code>(완전히 같다), <code>!=</code>(다르다)</li>
+                <li><strong>논리 연산자 (조건 묶기):</strong> 
+                    <ul>
+                        <li><code>&&</code> (AND): 양쪽 다 참이어야 참! (예: 키 150 이상 <strong>그리고</strong> 나이 12세 이상)</li>
+                        <li><code>||</code> (OR): 둘 중 하나만 참이어도 참! (예: VIP 회원 <strong>이거나</strong> 관리자)</li>
+                        <li><code>!</code> (NOT): 결과를 반대로 뒤집기 (참을 거짓으로, 거짓을 참으로)</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. 🎢 창의적 응용 예제 2: 롤러코스터 탑승 판독기</h2>
+            <p>논리 연산자를 사용하여, 놀이공원에서 롤러코스터를 탈 수 있는지 확인하는 프로그램을 만들어 봅시다. 조건은 <strong>"키가 140cm 이상이고(AND), 심장 질환이 없어야(NOT)"</strong> 합니다.</p>
+
+<pre><code><span class="cmt">#include &lt;stdio.h&gt;</span>
+
+<span class="type">int</span> <span class="func">main</span>() {
+    <span class="type">int</span> height = <span class="type">145</span>;          <span class="cmt">// 내 키</span>
+    <span class="type">int</span> hasHeartDisease = <span class="type">0</span>;   <span class="cmt">// 심장 질환 여부 (0: 없음, 1: 있음)</span>
+
+    <span class="func">printf</span>(<span class="str">"키: %dcm, 심장질환 여부: %d\n"</span>, height, hasHeartDisease);
+
+    <span class="cmt">// 키가 140 이상 '이고(&&)' 심장 질환이 '없는(0과 같은)' 경우 판별</span>
+    <span class="cmt">// C언어에서는 결과가 1이면 참, 0이면 거짓으로 나옵니다.</span>
+    <span class="type">int</span> canRide = (height &gt;= <span class="type">140</span>) && (hasHeartDisease == <span class="type">0</span>);
+
+    <span class="func">printf</span>(<span class="str">"탑승 가능 여부 (1=가능, 0=불가): %d\n"</span>, canRide);
+
+    <span class="kw">return</span> <span class="type">0</span>;
+}</code></pre>
+            
+            <div class="callout">
+                <h4>🚀 다음 챕터 예고</h4>
+                <p>위 예제에서 <code>1</code> 또는 <code>0</code>으로만 결과가 나오는 게 조금 딱딱하죠? 다음 장인 <strong>04. 조건문</strong>에서는 이 결과를 가지고 "탑승을 환영합니다!" 또는 "죄송하지만 탑승하실 수 없습니다." 라는 친절한 문구로 바꿔주는 마법을 배우게 됩니다!</p>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
